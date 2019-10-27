@@ -10,10 +10,6 @@
  */
 
 import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -31,6 +27,7 @@ public class LoginWindow extends JFrame
     public LoginWindow(){
         super.setTitle("Login");
         super.setLayout(new GridLayout(3, 2));
+        super.setResizable(false);
         
         super.add(LABEL_USER); super.add(TEXTFIELD_USER);
         super.add(LABEL_PASS); super.add(PASSFIELD_PASS);

@@ -24,7 +24,7 @@ public interface AdminComponents {
     /**
         Create User Components
     */
-    public final static JButton BUTTON_ADD_USER = new JButton("Add User");
+    public final static JButton BUTTON_ADD_USER = new JButton("Add User / Minimize");
     public final JTextField TEXTFIELD_USER = new JTextField("", 12);
     public final JTextField TEXTFIELD_PASS = new JTextField("", 12);
     public final JPasswordField PASSFIELD_USER = new JPasswordField("", 12);
