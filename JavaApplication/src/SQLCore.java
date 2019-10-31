@@ -20,7 +20,7 @@ import java.util.TreeMap;
 public class SQLCore extends SQLDriver {
     
     //Not yet tested: Supposedly for admin purposes    
-    public boolean addData(String statement){
+    public static boolean addData(String statement){
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
                 ){
@@ -32,7 +32,7 @@ public class SQLCore extends SQLDriver {
         return true;
     }
     
-    public int getUserAuth(int userID){
+    public static int getUserAuth(int userID){
         String statement = "SELECT AuthLevel FROM userauth WHERE UserID="+ userID +";";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
@@ -53,7 +53,7 @@ public class SQLCore extends SQLDriver {
      * @param pass
      * @return String[2]
      */
-    public String[] getLogin(String user, String pass){
+    public static String[] getLogin(String user, String pass){
         String arr[] = new String[3];
         String statement = "SELECT Nickname, UserID, Login FROM USERS WHERE Login='"
                 + user + "' AND Password='" 
@@ -74,10 +74,9 @@ public class SQLCore extends SQLDriver {
         return null;
     }
     
-    public String getUsername(String user, int userID){
+    public static String getUsername(String user, int userID){
         String username;
-        String statement = "SELECT Login, UserID FROM USERS WHERE Login='"
-                + user + "' AND UserID='" 
+        String statement = "SELECT Login, UserID FROM USERS WHERE UserID='" 
                 + userID + "';";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
@@ -93,10 +92,9 @@ public class SQLCore extends SQLDriver {
         return null;
     }
     
-    public String getPassword(String user, int userID){
+    public static String getPassword(int userID){
         String password;
-        String statement = "SELECT Password FROM USERS WHERE Login='"
-                + user + "' AND UserID='" 
+        String statement = "SELECT Password FROM USERS WHERE UserID='" 
                 + userID + "';";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
@@ -112,10 +110,9 @@ public class SQLCore extends SQLDriver {
         return null;
     }
     
-    public String getNickname(String user, int userID){
+    public static String getNickname(int userID){
         String nickname;
-        String statement = "SELECT Nickname FROM USERS WHERE Login='"
-                + user + "' AND UserID='" 
+        String statement = "SELECT Nickname FROM USERS WHERE UserID='" 
                 + userID + "';";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
@@ -131,10 +128,9 @@ public class SQLCore extends SQLDriver {
         return null;
     }
     
-    public String setUsername(String user, int userID){
+    public static String setUsername(String user, int userID){
         String username;
-        String statement = "SELECT Username FROM USERS WHERE Login='"
-                + user + "' AND UserID='"
+        String statement = "SELECT Username FROM USERS WHERE UserID='"
                 + userID + "';";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
@@ -150,7 +146,7 @@ public class SQLCore extends SQLDriver {
         return null;
     }
     
-    public ArrayList<GachaItem> getItems(int type){
+    public static ArrayList<GachaItem> getItems(int type){
         ArrayList<GachaItem> gachaItems = new ArrayList<>();
         String statement = "SELECT Item_ID,Item_Name,Item_Type FROM ItemInfoList WHERE Item_Type="
                 + type + ";";
@@ -168,5 +164,31 @@ public class SQLCore extends SQLDriver {
             System.out.println(ex.getLocalizedMessage());
         }
         return null;
+    }
+    
+    public static void itemOwn(int userID, GachaItem item){
+        String statement = "INSERT INTO ItemOwnership (UserID,ItemID) VALUES ("
+                + userID + "," + item.getId() + ");";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+            
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
+    }
+    
+    public static void updateGP(int userID, int gamePoints){
+        String statement = "UPDATE Users"
+                + "SET GamePoints = " + gamePoints;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+            
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
     }
 }

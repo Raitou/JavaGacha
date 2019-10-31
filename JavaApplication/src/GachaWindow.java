@@ -25,7 +25,11 @@ public class GachaWindow extends JFrame implements ActionListener{
     private JButton rollBtn;
     private JTextField itemFld;
     
-    private static final GachaBox box = new GachaBox();;
+    private static final GachaBox box = new GachaBox();
+    private String username;
+    private int userID;
+    
+    private int gamePoints;
     
     public GachaWindow(){
         super("Gacha");

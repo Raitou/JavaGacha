@@ -15,7 +15,6 @@ import javax.swing.JTextField;
  * @author raito
  */
 public interface LoginComponents {
-    public final static SQLCore SQL_CONN = new SQLCore();
     public final static JLabel LABEL_USER = new JLabel("Username", JLabel.CENTER);
     public final static JLabel LABEL_PASS = new JLabel("Password", JLabel.CENTER);
     public final static JButton BUTTON_LOGIN = new JButton("Login");

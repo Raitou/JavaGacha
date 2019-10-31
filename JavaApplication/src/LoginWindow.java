@@ -59,7 +59,7 @@ public class LoginWindow extends JFrame
     }
     
     private boolean isAccountExists(String user, String pass){
-        String userData[] = SQL_CONN.getLogin(user, pass);
+        String userData[] = SQLCore.getLogin(user, pass);
         if(userData != null){
             m_intUID = Integer.parseInt(userData[0]);
             m_strNickname = userData[1];
@@ -74,7 +74,7 @@ public class LoginWindow extends JFrame
     
     public void loadNewWindow(){
         loadListeners(false);
-        switch(SQL_CONN.getUserAuth(LoginWindow.m_intUID)){
+        switch(SQLCore.getUserAuth(LoginWindow.m_intUID)){
             case ADMIN_USER:
                 AdminWindow adminWin = new AdminWindow(m_strNickname, m_intUID);
                 break;

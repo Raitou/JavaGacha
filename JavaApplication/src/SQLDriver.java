@@ -14,9 +14,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class SQLDriver {
-    protected final static String CONNECTION_URL = "jdbc:mysql://host/database?useSSL=false";
-    protected final static String USER = "";
-    protected final static String PASS = "";
+    protected final static String CONNECTION_URL = "jdbc:mysql://localhost/testdb?useSSL=false";
+    protected final static String USER = "aevan";
+    protected final static String PASS = "evanamel";
     
     protected SQLDriver(){
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);){

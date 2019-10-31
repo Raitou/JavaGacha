@@ -13,7 +13,6 @@ import java.util.Random;
  * @author 201811610
  */
 public class GachaBox {
-    private final static SQLCore SQL_CONN = new SQLCore();
     private static ArrayList<GachaItem> nItems;
     private static ArrayList<GachaItem> rItems;
     private static ArrayList<GachaItem> srItems;
@@ -27,9 +26,9 @@ public class GachaBox {
     }
     
     private void fill(){
-        nItems=SQL_CONN.getItems(NORMAL);
-        rItems=SQL_CONN.getItems(RARE);
-        srItems=SQL_CONN.getItems(SUPER_RARE);
+        nItems=SQLCore.getItems(NORMAL);
+        rItems=SQLCore.getItems(RARE);
+        srItems=SQLCore.getItems(SUPER_RARE);
         listAll();
     }
     
