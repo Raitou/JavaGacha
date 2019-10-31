@@ -14,9 +14,9 @@ import java.util.Random;
  */
 public class GachaBox {
     private final static SQLCore SQL_CONN = new SQLCore();
-    private ArrayList<GachaItem> nItems;
-    private ArrayList<GachaItem> rItems;
-    private ArrayList<GachaItem> srItems;
+    private static ArrayList<GachaItem> nItems;
+    private static ArrayList<GachaItem> rItems;
+    private static ArrayList<GachaItem> srItems;
     
     public final static int NORMAL = 0;
     public final static int RARE = 1;
@@ -30,11 +30,15 @@ public class GachaBox {
         nItems=SQL_CONN.getItems(NORMAL);
         rItems=SQL_CONN.getItems(RARE);
         srItems=SQL_CONN.getItems(SUPER_RARE);
+        listAll();
     }
     
     public void listAll(){
+        System.out.print("Normal Items: ");
         listItems(nItems);
+        System.out.print("Rare Items: ");
         listItems(rItems);
+        System.out.print("Super Rare Items: ");
         listItems(srItems);
         
     }
@@ -48,23 +52,24 @@ public class GachaBox {
         GachaItem item=null;
         
         Random r = new Random();
-        
-        int rng = r.nextInt(100);
-        
-        if(rng < 60){
-            rng = r.nextInt(nItems.size());
-            item = nItems.get(rng);
-            
+        double rng = r.nextDouble();
+        System.out.println(rng);
+        if(rng < 0.6){
+            int rng2 = r.nextInt(nItems.size());
+            item = nItems.get(rng2);
+            return item;
         }
-        else if(rng < 80){
-            rng = r.nextInt(rItems.size());
-            item = rItems.get(rng);
-        }
-        else if(rng < 99){
-            rng = r.nextInt(srItems.size());
-            item = srItems.get(rng);
+        if(rng < 0.8){
+            int rng2 = r.nextInt(rItems.size());
+            item = rItems.get(rng2);
+            return item;
         }
         
+        if(rng == 1.0){
+            int rng2 = r.nextInt(srItems.size());
+            item = srItems.get(rng2);
+            return item;
+        }
         return item;
     }
 }

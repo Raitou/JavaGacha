@@ -106,6 +106,8 @@ public class LoginWindow extends JFrame
                     String.copyValueOf(PASSFIELD_PASS.getPassword()))){
                 MessageBox("Welcome " + m_strNickname + "!"
                         , "Information", JOptionPane.INFORMATION_MESSAGE);
+                TEXTFIELD_USER.setText("");
+                PASSFIELD_PASS.setText("");
                 loadNewWindow();
                 this.dispose();
                 
