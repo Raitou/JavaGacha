@@ -29,9 +29,12 @@ public class AdminWindow extends JFrame
     private static boolean IS_CHECKED = false;
     private static String m_strUser;
     private static int m_intUID;
-    private static Component userPanel;
-    private static Component logoutPanel;
-    private static boolean m_bHasOperation = false;
+    private static Component panelUserAdd;
+    private static Component panelLogout;
+    private static Component panelUserEdit;
+    private static Component panelItem;
+    private static boolean m_bpanelUserAddHasOperation = false;
+    private static boolean m_bpanelUserEditHasOperation = false;
     
     public AdminWindow(String user, int userID){
         AdminWindow.m_strUser = user;
@@ -54,48 +57,66 @@ public class AdminWindow extends JFrame
         gbc.fill = GridBagConstraints.BOTH;
         //bottom, left, right, top
         gbc.insets = new Insets(10 , 10, 10, 10);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        super.add(userPanel = initiateCreateUser(), gbc);
-        if((logoutPanel = initiateLogout()) != null){
+        
+        if((panelUserAdd = initiateCreateUser()) != null){
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            super.add(panelUserAdd = initiateCreateUser(), gbc);
+        }
+        
+        if((panelUserEdit = inititateEditUser()) != null){
             gbc.gridx = 1;
             gbc.gridy = 0;
-            super.add(logoutPanel, gbc);
+            super.add(panelUserEdit, gbc);
         }
-
+        
+        if((panelLogout = initiateLogout()) != null){
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            super.add(panelLogout, gbc);
+        }
+        
         loadListeners(true);
     }
     
     private void loadListeners(boolean c){
         if(c){
-            IS_VISIBLE.addItemListener(this);
-            (m_bHasOperation ? BUTTON_ADD_USER : BUTTON_CREATE_USER).addActionListener(this);
+            CREATE_USER_IS_VISIBLE.addItemListener(this);
+            CREATE_USER_BUTTON_ADD_USER.addActionListener(this);
+            BUTTON_CREATE_USER.addActionListener(this);
+            BUTTON_EDIT_USER.addActionListener(this);
             BUTTON_LOGOUT.addActionListener(this);
             if(!IS_CHECKED){
-                PASSFIELD_USER.addKeyListener(this);
-                PASSFIELD_USER_CONFIRM.addKeyListener(this);
+                CREATE_USER_PASSFIELD_USER.addKeyListener(this);
+                CREATE_USER_PASSFIELD_USER_CONFIRM.addKeyListener(this);
             } else {
-                TEXTFIELD_PASS.addKeyListener(this);
+                CREATE_USER_TEXTFIELD_PASS.addKeyListener(this);
             }
         }else{
-            IS_VISIBLE.removeItemListener(this);
-            BUTTON_ADD_USER.removeActionListener(this);
+            CREATE_USER_IS_VISIBLE.removeItemListener(this);
+            CREATE_USER_BUTTON_ADD_USER.removeActionListener(this);
             BUTTON_CREATE_USER.removeActionListener(this);
             BUTTON_LOGOUT.removeActionListener(this);
+            BUTTON_EDIT_USER.removeActionListener(this);
             if(!IS_CHECKED){
-                PASSFIELD_USER.removeKeyListener(this);
-                PASSFIELD_USER_CONFIRM.removeKeyListener(this);
+                CREATE_USER_PASSFIELD_USER.removeKeyListener(this);
+                CREATE_USER_PASSFIELD_USER_CONFIRM.removeKeyListener(this);
             } else {
-                TEXTFIELD_PASS.removeKeyListener(this);
+                CREATE_USER_TEXTFIELD_PASS.removeKeyListener(this);
             }
         }
     }
     
     
     private void removeComponents(){
-        super.remove(userPanel);
-        if(logoutPanel != null){
-            super.remove(logoutPanel);
+        if(panelUserAdd != null){
+            super.remove(panelUserAdd);
+        }
+        if(panelUserEdit != null){
+            super.remove(panelUserEdit);
+        }
+        if(panelLogout != null){
+            super.remove(panelLogout);
         }
         loadListeners(false);
     }
@@ -107,11 +128,32 @@ public class AdminWindow extends JFrame
     }
     
     private Component initiateLogout(){
-        if(!m_bHasOperation){
+        if(!(m_bpanelUserAddHasOperation ||
+                m_bpanelUserEditHasOperation
+                )){
             return BUTTON_LOGOUT;
         }else {
             return null;
         }
+    }
+    
+    private Component inititateEditUser(){
+        GridBagConstraints gbc = new GridBagConstraints();
+        JPanel userLayout = new JPanel(new GridBagLayout());
+        if(!(m_bpanelUserAddHasOperation) &&
+                (m_bpanelUserEditHasOperation)){
+            
+            
+        } else {
+            if(!(m_bpanelUserAddHasOperation ||
+                m_bpanelUserEditHasOperation
+                )){
+               return BUTTON_EDIT_USER;
+            }else {
+                return null;
+            }
+        }
+        return userLayout;
     }
     
     private Component initiateCreateUser(){
@@ -120,62 +162,67 @@ public class AdminWindow extends JFrame
         /** 
             Just wanting to have it a body o/
         */
-        if(m_bHasOperation){
+        if(m_bpanelUserAddHasOperation &&
+                !(m_bpanelUserEditHasOperation)){
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
             //bottom, left, right, top
             gbc.insets = new Insets(5,0,0,0);
             gbc.gridx = 0;
             gbc.gridy = 0;
-            userLayout.add(LABEL_CREATE_USER, gbc);
+            userLayout.add(CREATE_USER_LABEL_CREATE_USER, gbc);
 
             
             gbc.gridx = 0;  
             gbc.gridy = 1;  
-            userLayout.add(LABEL_USER, gbc);
+            userLayout.add(CREATE_USER_LABEL_USER, gbc);
 
             gbc.ipady = 0;
             gbc.gridx = 1;  
             gbc.gridy = 1;  
-            userLayout.add(TEXTFIELD_USER, gbc);
+            userLayout.add(CREATE_USER_TEXTFIELD_USER, gbc);
 
             gbc.ipady = 5;
             gbc.gridx = 0;  
             gbc.gridy = 2;
-            userLayout.add(LABEL_PASS, gbc);
+            userLayout.add(CREATE_USER_LABEL_PASS, gbc);
 
             if(!IS_CHECKED){
                 gbc.ipady = 0;
                 gbc.gridx = 1;  
                 gbc.gridy = 2;  
-                userLayout.add(PASSFIELD_USER, gbc);
+                userLayout.add(CREATE_USER_PASSFIELD_USER, gbc);
 
                 gbc.ipady = 0;
                 gbc.gridx = 1;
                 gbc.gridy = 3;
-                userLayout.add(PASSFIELD_USER_CONFIRM, gbc);
+                userLayout.add(CREATE_USER_PASSFIELD_USER_CONFIRM, gbc);
             } else {
                 gbc.ipady = 0;
                 gbc.gridx = 1;  
                 gbc.gridy = 2;  
-                userLayout.add(TEXTFIELD_PASS, gbc);
+                userLayout.add(CREATE_USER_TEXTFIELD_PASS, gbc);
             }
 
             gbc.ipady = 0;
             gbc.gridx = 2;
             gbc.gridy = 2;
-            userLayout.add(IS_VISIBLE, gbc);
+            userLayout.add(CREATE_USER_IS_VISIBLE, gbc);
             
             gbc.ipady = 0;
             gbc.gridwidth = 10;
             gbc.gridx = 0;
             gbc.gridy = (IS_CHECKED ? 3 : 4 );
-            userLayout.add(BUTTON_ADD_USER, gbc);
+            userLayout.add(CREATE_USER_BUTTON_ADD_USER, gbc);
         } else {
-            return BUTTON_CREATE_USER;
+            if(!(m_bpanelUserAddHasOperation ||
+                m_bpanelUserEditHasOperation
+                )){
+               return BUTTON_CREATE_USER;
+            }else {
+                return null;
+            }
         }
-        
-        
         return userLayout;
     }
     
@@ -186,7 +233,7 @@ public class AdminWindow extends JFrame
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-        if(e.getSource() == IS_VISIBLE){
+        if(e.getSource() == CREATE_USER_IS_VISIBLE){
             if(e.getStateChange() == 1){
                 IS_CHECKED = true;
                 refreshFrame();
@@ -200,18 +247,27 @@ public class AdminWindow extends JFrame
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == BUTTON_CREATE_USER){
-            m_bHasOperation = true;
+            m_bpanelUserAddHasOperation = true;
+            m_bpanelUserEditHasOperation = false;
             BUTTON_CREATE_USER.removeActionListener(this);
             refreshFrame();
             return;
         }
-        if(e.getSource() == BUTTON_ADD_USER){
-            if((IS_CHECKED ? !TEXTFIELD_PASS.getText().isEmpty() 
-                    : PASSFIELD_USER_CONFIRM.getPassword().length != 0)){
+        if(e.getSource() == BUTTON_EDIT_USER){
+            m_bpanelUserAddHasOperation = false;
+            m_bpanelUserEditHasOperation = true;
+            BUTTON_EDIT_USER.removeActionListener(this);
+            refreshFrame();
+            return;
+        }
+        if(e.getSource() == CREATE_USER_BUTTON_ADD_USER){
+            if((IS_CHECKED ? !CREATE_USER_TEXTFIELD_PASS.getText().isEmpty() 
+                    : CREATE_USER_PASSFIELD_USER_CONFIRM.getPassword().length != 0)){
                 
             }
-            m_bHasOperation = false;
-            BUTTON_ADD_USER.removeActionListener(this);
+            m_bpanelUserAddHasOperation = false;
+            m_bpanelUserEditHasOperation = false;
+            CREATE_USER_BUTTON_ADD_USER.removeActionListener(this);
             refreshFrame();
             return;
         }
