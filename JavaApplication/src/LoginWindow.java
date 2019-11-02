@@ -21,8 +21,7 @@ public class LoginWindow extends JFrame
         implements ActionListener, KeyListener, AuthLevel, LoginComponents {
     
     
-    private static String m_strNickname;
-    private static int m_intUID;
+    private static User m_user;
     
     public LoginWindow(){
         super.setTitle("Login");
@@ -61,31 +60,29 @@ public class LoginWindow extends JFrame
     private boolean isAccountExists(String user, String pass){
         String userData[] = SQLCore.getLogin(user, pass);
         if(userData != null){
-            m_intUID = Integer.parseInt(userData[0]);
-            m_strNickname = userData[1];
+            m_user = new User(user, pass);
             return true;
             
         } else {
-            m_intUID = 0;
-            m_strNickname = null;
-            return false;
+            m_user = null; 
+           return false;
         }
     }
     
     public void loadNewWindow(){
         loadListeners(false);
-        switch(SQLCore.getUserAuth(LoginWindow.m_intUID)){
+        switch(SQLCore.getUserAuth(m_user.getUID())){
             case ADMIN_USER:
-                AdminWindow adminWin = new AdminWindow(m_strNickname, m_intUID);
+                AdminWindow adminWin = new AdminWindow(m_user);
                 break;
             case NORMAL_USER:
-                UserWindow userWin = new UserWindow(m_strNickname, m_intUID);
+                UserWindow userWin = new UserWindow(m_user);
                 break;
             case BANNED_USER:
                 MessageBox("This user account is blocked!", "Warning!", JOptionPane.WARNING_MESSAGE);
                 break;
             default:
-                UserWindow userWinDef = new UserWindow(m_strNickname, m_intUID);
+                UserWindow userWinDef = new UserWindow(m_user);
         }
     }
     
@@ -104,7 +101,7 @@ public class LoginWindow extends JFrame
         if(e.getSource() == BUTTON_LOGIN){
             if(isAccountExists(TEXTFIELD_USER.getText(), 
                     String.copyValueOf(PASSFIELD_PASS.getPassword()))){
-                MessageBox("Welcome " + m_strNickname + "!"
+                MessageBox("Welcome " + m_user.getNickname() + "!"
                         , "Information", JOptionPane.INFORMATION_MESSAGE);
                 TEXTFIELD_USER.setText("");
                 PASSFIELD_PASS.setText("");

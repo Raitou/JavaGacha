@@ -28,8 +28,7 @@ public class UserWindow extends JFrame
         implements UserComponents, ItemListener, ActionListener, KeyListener{
     
     private static boolean IS_CHECKED = false;
-    private static String m_strUser;
-    private static int m_intUID;
+    private static User m_user;
     private static Component panelChangeProfile;
     private static Component panelLogout;
     private static Component panelPlayGacha;
@@ -38,9 +37,8 @@ public class UserWindow extends JFrame
     
     private static final GachaBox box = new GachaBox();
     
-    public UserWindow(String user, int userID){
-        UserWindow.m_strUser = user;
-        UserWindow.m_intUID = userID;
+    public UserWindow(User user){
+        UserWindow.m_user = user;
         
         super.setTitle("User Window");
         super.setLayout(new GridBagLayout());
@@ -173,7 +171,7 @@ public class UserWindow extends JFrame
             
             gbc.gridx = 1;
             gbc.gridy = 1;
-            PLAY_GACHA_LABEL_GP_VALUE.setText(new Integer(SQLCore.getGP(m_intUID)).toString());
+            PLAY_GACHA_LABEL_GP_VALUE.setText(new Integer(m_user.getGP()).toString());
             userLayout.add(PLAY_GACHA_LABEL_GP_VALUE,gbc);
             
             
@@ -218,7 +216,7 @@ public class UserWindow extends JFrame
             gbc.ipady = 0;
             gbc.gridx = 1;  
             gbc.gridy = 1;  
-            CHANGE_PROFILE_TEXTFIELD_USER.setText(SQLCore.getUsername(m_intUID));
+            CHANGE_PROFILE_TEXTFIELD_USER.setText(SQLCore.getUsername(m_user.getUID()));
             userLayout.add(CHANGE_PROFILE_TEXTFIELD_USER, gbc);
             
             gbc.ipady = 5;
@@ -229,7 +227,7 @@ public class UserWindow extends JFrame
             gbc.ipady = 0;
             gbc.gridx = 1;
             gbc.gridy = 2;
-            CHANGE_PROFILE_TEXTFIELD_NICKNAME.setText(SQLCore.getNickname(m_intUID));
+            CHANGE_PROFILE_TEXTFIELD_NICKNAME.setText(SQLCore.getNickname(m_user.getUID()));
             userLayout.add(CHANGE_PROFILE_TEXTFIELD_NICKNAME,gbc);
 
             gbc.ipady = 5;
@@ -362,12 +360,12 @@ public class UserWindow extends JFrame
     public void changeProfileApply(){
         
         if(!CHANGE_PROFILE_TEXTFIELD_USER.getText().isEmpty())
-            SQLCore.setUsername(m_intUID, CHANGE_PROFILE_TEXTFIELD_USER.getText());
+            SQLCore.setUsername(m_user.getUID(), CHANGE_PROFILE_TEXTFIELD_USER.getText());
         
         if(!CHANGE_PROFILE_TEXTFIELD_NICKNAME.getText().isEmpty())
-            SQLCore.setNickname(m_intUID, CHANGE_PROFILE_TEXTFIELD_NICKNAME.getText());
+            SQLCore.setNickname(m_user.getUID(), CHANGE_PROFILE_TEXTFIELD_NICKNAME.getText());
         
-        String newPass = SQLCore.getPassword(m_intUID);
+        String newPass = SQLCore.getPassword(m_user.getUID());
         if(IS_CHECKED){
             if(!CHANGE_PROFILE_TEXTFIELD_PASS.getText().isEmpty())
                 newPass = CHANGE_PROFILE_TEXTFIELD_PASS.getText();
@@ -377,7 +375,7 @@ public class UserWindow extends JFrame
                 newPass = array2String(CHANGE_PROFILE_PASSFIELD_USER.getPassword());
         }
         
-        SQLCore.setPassword(m_intUID, newPass);
+        SQLCore.setPassword(m_user.getUID(), newPass);
     }
     
     public String array2String(char[] array){
@@ -395,7 +393,7 @@ public class UserWindow extends JFrame
         
         PLAY_GACHA_TEXTFIELD_ITEM.setText(get.getName());
         
-        SQLCore.itemOwn(m_intUID, get);
+        SQLCore.itemOwn(m_user.getUID(), get);
     }
 
     @Override
@@ -408,7 +406,7 @@ public class UserWindow extends JFrame
     public void keyReleased(KeyEvent e) {}
     
     public static void main(String args[]){
-        UserWindow x = new UserWindow("User",2);
+        UserWindow x = new UserWindow(new User(2));
     }
 }
 

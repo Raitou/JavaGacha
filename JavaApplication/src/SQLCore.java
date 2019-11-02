@@ -54,10 +54,31 @@ public class SQLCore extends SQLDriver {
      * @return String[2]
      */
     public static String[] getLogin(String user, String pass){
-        String arr[] = new String[3];
-        String statement = "SELECT Nickname, UserID, Login FROM USERS WHERE Login='"
+        String arr[] = new String[4];
+        String statement = "SELECT Nickname, UserID, Login, GamePoints FROM USERS WHERE Login='"
                 + user + "' AND Password='" 
                 + pass + "';";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            ResultSet res = query.executeQuery();
+            while(res.next()){
+                arr[0] = res.getString("UserID");
+                arr[1] = res.getString("Nickname");
+                arr[2] = res.getString("Login");
+                arr[3] = res.getString("GamePoints");
+                return arr;
+            }
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
+        return null;
+    }
+    
+    public static String[] getLogin(int userID){
+        String arr[] = new String[3];
+        String statement = "SELECT Nickname, UserID, Login FROM USERS WHERE UserID='"
+                + userID + "';";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
                 ){
@@ -205,7 +226,7 @@ public class SQLCore extends SQLDriver {
         }
     }
     
-    public static void updateGP(int userID, int gamePoints){
+    public static void setGP(int userID, int gamePoints){
         String statement = "UPDATE Users SET GamePoints = '" + gamePoints
                 +"' WHERE UserID = "+ userID;
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
