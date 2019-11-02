@@ -26,9 +26,9 @@ public class GachaBox {
     }
     
     private void fill(){
-        nItems=SQLCore.getItems(NORMAL);
-        rItems=SQLCore.getItems(RARE);
-        srItems=SQLCore.getItems(SUPER_RARE);
+        nItems=SQLCore.getAllItems(NORMAL);
+        rItems=SQLCore.getAllItems(RARE);
+        srItems=SQLCore.getAllItems(SUPER_RARE);
         listAll();
     }
     
@@ -52,7 +52,6 @@ public class GachaBox {
         
         Random r = new Random();
         double rng = r.nextDouble();
-        System.out.println(rng);
         if(rng < 0.6){
             int rng2 = r.nextInt(nItems.size());
             item = nItems.get(rng2);

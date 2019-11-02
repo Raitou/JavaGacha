@@ -74,7 +74,7 @@ public class SQLCore extends SQLDriver {
         return null;
     }
     
-    public static String getUsername(String user, int userID){
+    public static String getUsername(int userID){
         String username;
         String statement = "SELECT Login, UserID FROM USERS WHERE UserID='" 
                 + userID + "';";
@@ -128,25 +128,25 @@ public class SQLCore extends SQLDriver {
         return null;
     }
     
-    public static String setUsername(String user, int userID){
-        String username;
-        String statement = "SELECT Username FROM USERS WHERE UserID='"
+    public static int getGP(int userID){
+        int gamePoints;
+        String statement = "SELECT GamePoints FROM USERS WHERE UserID='" 
                 + userID + "';";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
                 ){
             ResultSet res = query.executeQuery();
             while(res.next()){
-                username = res.getString("Username");
-                return username;
+                gamePoints = Integer.parseInt(res.getString("GamePoints"));
+                return gamePoints;
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
         }
-        return null;
+        return -1;
     }
     
-    public static ArrayList<GachaItem> getItems(int type){
+    public static ArrayList<GachaItem> getAllItems(int type){
         ArrayList<GachaItem> gachaItems = new ArrayList<>();
         String statement = "SELECT Item_ID,Item_Name,Item_Type FROM ItemInfoList WHERE Item_Type="
                 + type + ";";
@@ -166,6 +166,58 @@ public class SQLCore extends SQLDriver {
         return null;
     }
     
+    public static void setUsername(int userID, String newUsername){
+        String statement = "UPDATE Users SET Login = '" + newUsername
+                +"' WHERE UserID = "+ userID;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+  
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
+    }
+    
+    public static void setNickname(int userID, String newNickname){
+        String statement = "UPDATE Users SET Nickname = '" + newNickname
+                +"' WHERE UserID = "+ userID;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+  
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
+    }
+
+    public static void setPassword(int userID, String newPassword){
+        String statement = "UPDATE Users SET Password = '" + newPassword
+                +"' WHERE UserID = "+ userID;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+  
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
+    }
+    
+    public static void updateGP(int userID, int gamePoints){
+        String statement = "UPDATE Users SET GamePoints = '" + gamePoints
+                +"' WHERE UserID = "+ userID;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+            
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
+    }
+    
     public static void itemOwn(int userID, GachaItem item){
         String statement = "INSERT INTO ItemOwnership (UserID,ItemID) VALUES ("
                 + userID + "," + item.getId() + ");";
@@ -179,16 +231,5 @@ public class SQLCore extends SQLDriver {
         }
     }
     
-    public static void updateGP(int userID, int gamePoints){
-        String statement = "UPDATE Users"
-                + "SET GamePoints = " + gamePoints;
-        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
-                PreparedStatement query = con.prepareStatement(statement);
-                ){
-            query.executeUpdate();
-            
-        }catch(SQLException ex){
-            System.out.println(ex.getLocalizedMessage());
-        }
-    }
+
 }
