@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -48,6 +49,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             query.executeUpdate();
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -85,6 +87,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return NORMAL_USER;
     }
@@ -96,10 +99,32 @@ public class SQLCore extends SQLDriver implements AuthLevel {
      * @return String[3] else null
      */
     public static String[] getLogin(String user, String pass){
-        String arr[] = new String[3];
-        String statement = "SELECT Nickname, UserID, Login FROM USERS WHERE Login='"
+        String arr[] = new String[4];
+        String statement = "SELECT Nickname, UserID, Login, GamePoints FROM USERS WHERE Login='"
                 + user + "' AND Password='" 
                 + pass + "';";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            ResultSet res = query.executeQuery();
+            while(res.next()){
+                arr[0] = res.getString("UserID");
+                arr[1] = res.getString("Nickname");
+                arr[2] = res.getString("Login");
+                arr[3] = res.getString("GamePoints");
+                return arr;
+            }
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
+    }
+    
+    public static String[] getLogin(int userID){
+        String arr[] = new String[3];
+        String statement = "SELECT Nickname, UserID, Login FROM USERS WHERE UserID='"
+                + userID + "';";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
                 ){
@@ -112,11 +137,12 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
     
-    public static String getUsername(String user, int userID){
+    public static String getUsername(int userID){
         String username;
         String statement = "SELECT Login, UserID FROM USERS WHERE UserID='" 
                 + userID + "';";
@@ -130,6 +156,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -148,6 +175,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -166,29 +194,31 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
     
-    public static String setUsername(String user, int userID){
-        String username;
-        String statement = "SELECT Username FROM USERS WHERE UserID='"
+    public static int getGP(int userID){
+        int gamePoints;
+        String statement = "SELECT GamePoints FROM USERS WHERE UserID='" 
                 + userID + "';";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
                 ){
             ResultSet res = query.executeQuery();
             while(res.next()){
-                username = res.getString("Username");
-                return username;
+                gamePoints = Integer.parseInt(res.getString("GamePoints"));
+                return gamePoints;
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
-        return null;
+        return -1;
     }
     
-    public static ArrayList<GachaItem> getItems(int type){
+    public static ArrayList<GachaItem> getAllItems(int type){
         ArrayList<GachaItem> gachaItems = new ArrayList<>();
         String statement = "SELECT Item_ID,Item_Name,Item_Type FROM ItemInfoList WHERE Item_Type="
                 + type + ";";
@@ -204,8 +234,86 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             return gachaItems;
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
+    }
+    
+    public static ArrayList<GachaItem> getItemsOf(int UID){
+        ArrayList<GachaItem> gachaItems = new ArrayList<>();
+        String statement = "SELECT Item_ID, Item_Type, Item_Name FROM ItemInfoList, ItemOwnership WHERE ItemOwnership.UserID ="
+                + UID + "ORDER BY ItemOwnership.OwnershipID;";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            ResultSet res = query.executeQuery();
+            while(res.next()){
+                gachaItems.add(new GachaItem(res.getInt("Item_ID"),
+                        res.getInt("Item_Type"),
+                        res.getString("Item_Name")));
+            }
+            return gachaItems;
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;        
+    }
+    
+    public static void setUsername(int userID, String newUsername){
+        String statement = "UPDATE Users SET Login = '" + newUsername
+                +"' WHERE UserID = "+ userID;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+  
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public static void setNickname(int userID, String newNickname){
+        String statement = "UPDATE Users SET Nickname = '" + newNickname
+                +"' WHERE UserID = "+ userID;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+  
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void setPassword(int userID, String newPassword){
+        String statement = "UPDATE Users SET Password = '" + newPassword
+                +"' WHERE UserID = "+ userID;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+  
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public static void setGP(int userID, int gamePoints){
+        String statement = "UPDATE Users SET GamePoints = '" + gamePoints
+                +"' WHERE UserID = "+ userID;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+            
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     public static void itemOwn(int userID, GachaItem item){
@@ -218,19 +326,9 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     
-    public static void updateGP(int userID, int gamePoints){
-        String statement = "UPDATE Users"
-                + "SET GamePoints = " + gamePoints;
-        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
-                PreparedStatement query = con.prepareStatement(statement);
-                ){
-            query.executeUpdate();
-            
-        }catch(SQLException ex){
-            System.out.println(ex.getLocalizedMessage());
-        }
-    }
+
 }

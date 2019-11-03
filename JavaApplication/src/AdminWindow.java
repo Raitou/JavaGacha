@@ -29,6 +29,7 @@ public class AdminWindow extends JFrame
     private static boolean CREATE_USER_IS_CHECKED = false;
     private static String m_strUser;
     private static int m_intUID;
+    private static User m_user;
     private static Component panelUserAdd;
     private static Component panelLogout;
     private static Component panelUserEdit;
@@ -36,9 +37,8 @@ public class AdminWindow extends JFrame
     private static boolean m_bpanelUserAddHasOperation = false;
     private static boolean m_bpanelUserEditHasOperation = false;
     
-    public AdminWindow(String user, int userID){
-        AdminWindow.m_strUser = user;
-        AdminWindow.m_intUID = userID;
+    public AdminWindow(User user){
+        AdminWindow.m_user = user;
         
         super.setTitle("Admin Window");
         super.setLayout(new GridBagLayout());

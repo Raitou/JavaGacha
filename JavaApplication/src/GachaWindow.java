@@ -25,7 +25,7 @@ public class GachaWindow extends JFrame implements ActionListener{
     private JButton rollBtn;
     private JTextField itemFld;
     
-    private static final GachaBox box = new GachaBox();
+
     private String username;
     private int userID;
     
@@ -66,11 +66,10 @@ public class GachaWindow extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e){
         if(e.getSource()==rollBtn){
-            gachaRoll();
         }
     }
     
-    public void gachaRoll(){
-         itemFld.setText(box.roll().toString());
-    }
+    
+    
+
 }

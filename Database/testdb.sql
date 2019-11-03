@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.9
+-- version 4.8.5
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 20, 2019 at 10:59 AM
--- Server version: 5.7.21
--- PHP Version: 5.6.35
+-- Generation Time: Nov 03, 2019 at 07:33 AM
+-- Server version: 5.7.26
+-- PHP Version: 7.2.18
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -21,6 +21,43 @@ SET time_zone = "+00:00";
 --
 -- Database: `testdb`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `iteminfolist`
+--
+
+DROP TABLE IF EXISTS `iteminfolist`;
+CREATE TABLE IF NOT EXISTS `iteminfolist` (
+  `Item_ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Item_Type` int(11) NOT NULL,
+  `Item_Name` varchar(64) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  PRIMARY KEY (`Item_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+--
+-- Dumping data for table `iteminfolist`
+--
+
+INSERT INTO `iteminfolist` (`Item_ID`, `Item_Type`, `Item_Name`) VALUES
+(1, 0, 'Pandog'),
+(2, 1, 'Jowa'),
+(3, 2, 'Yellow Pad');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `itemownership`
+--
+
+DROP TABLE IF EXISTS `itemownership`;
+CREATE TABLE IF NOT EXISTS `itemownership` (
+  `OwnershipID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ItemID` bigint(20) DEFAULT NULL,
+  `UserID` bigint(20) NOT NULL,
+  PRIMARY KEY (`OwnershipID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
 
@@ -56,6 +93,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `Password` varchar(32) NOT NULL,
   `Nickname` varchar(32) DEFAULT '',
   `IPAddress` varchar(32) DEFAULT '0.0.0.0',
+  `GamePoints` bigint(20) NOT NULL DEFAULT '30',
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `Login` (`Login`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
@@ -64,10 +102,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`UserID`, `Login`, `Password`, `Nickname`, `IPAddress`) VALUES
-(1, 'Admin', 'pass', 'Administrator', '0.0.0.0'),
-(2, 'User', 'test', 'Test', '0.0.0.0'),
-(3, 'Banned', '123', 'Ban User', '0.0.0.0');
+INSERT INTO `users` (`UserID`, `Login`, `Password`, `Nickname`, `IPAddress`, `GamePoints`) VALUES
+(1, 'Admin', 'pass', 'Administrator', '0.0.0.0', 30),
+(2, 'User', 'test', 'DarkKnight', '0.0.0.0', 30),
+(3, 'Banned', '123', 'Ban User', '0.0.0.0', 30);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

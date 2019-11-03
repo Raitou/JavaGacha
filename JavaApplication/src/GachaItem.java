@@ -46,6 +46,14 @@ public class GachaItem {
     
     @Override
     public String toString(){
-        return name;
+        String stars = "";
+        if(this.type >= GachaBox.NORMAL)
+            stars += "*";
+        if(this.type >= GachaBox.RARE)
+            stars += "*";
+        if(this.type >= GachaBox.SUPER_RARE)
+            stars += "*";
+        
+        return this.getName()+stars;
     }
 }
