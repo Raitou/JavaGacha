@@ -1,6 +1,7 @@
 
 import java.util.ArrayList;
 import java.util.Random;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -51,23 +52,24 @@ public class GachaBox {
         GachaItem item=null;
         
         Random r = new Random();
-        double rng = r.nextDouble();
-        if(rng < 0.6){
+        int rng = r.nextInt(100);
+        if(rng < 60){
             int rng2 = r.nextInt(nItems.size());
             item = nItems.get(rng2);
             return item;
         }
-        if(rng < 0.8){
+        if(rng < 80){
             int rng2 = r.nextInt(rItems.size());
             item = rItems.get(rng2);
             return item;
         }
         
-        if(rng == 1.0){
+        if(rng < 100){
             int rng2 = r.nextInt(srItems.size());
             item = srItems.get(rng2);
             return item;
         }
-        return item;
+        
+        return null;
     }
 }

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -27,6 +28,7 @@ public class SQLCore extends SQLDriver {
             query.executeUpdate();
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -43,6 +45,7 @@ public class SQLCore extends SQLDriver {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return 0;
     }
@@ -71,6 +74,7 @@ public class SQLCore extends SQLDriver {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -91,6 +95,7 @@ public class SQLCore extends SQLDriver {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -109,6 +114,7 @@ public class SQLCore extends SQLDriver {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -127,6 +133,7 @@ public class SQLCore extends SQLDriver {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -145,6 +152,7 @@ public class SQLCore extends SQLDriver {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -163,6 +171,7 @@ public class SQLCore extends SQLDriver {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return -1;
     }
@@ -183,8 +192,30 @@ public class SQLCore extends SQLDriver {
             return gachaItems;
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
+    }
+    
+    public static ArrayList<GachaItem> getItemsOf(int UID){
+        ArrayList<GachaItem> gachaItems = new ArrayList<>();
+        String statement = "SELECT Item_ID, Item_Type, Item_Name FROM ItemInfoList, ItemOwnership WHERE ItemOwnership.UserID ="
+                + UID + "ORDER BY ItemOwnership.OwnershipID;";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            ResultSet res = query.executeQuery();
+            while(res.next()){
+                gachaItems.add(new GachaItem(res.getInt("Item_ID"),
+                        res.getInt("Item_Type"),
+                        res.getString("Item_Name")));
+            }
+            return gachaItems;
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;        
     }
     
     public static void setUsername(int userID, String newUsername){
@@ -197,6 +228,7 @@ public class SQLCore extends SQLDriver {
   
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -210,6 +242,7 @@ public class SQLCore extends SQLDriver {
   
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -223,6 +256,7 @@ public class SQLCore extends SQLDriver {
   
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -236,6 +270,7 @@ public class SQLCore extends SQLDriver {
             
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -249,6 +284,7 @@ public class SQLCore extends SQLDriver {
             
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     

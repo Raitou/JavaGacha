@@ -23,6 +23,8 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
 
 public class UserWindow extends JFrame 
         implements UserComponents, ItemListener, ActionListener, KeyListener{
@@ -36,6 +38,13 @@ public class UserWindow extends JFrame
     private static boolean m_bpanelPlayGachaHasOperation = false;
     
     private static final GachaBox box = new GachaBox();
+    
+    public final Timer m_timer = new Timer(100,new ActionListener(){
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            PLAY_GACHA_TEXTFIELD_ITEM.setText(box.roll().toString());
+        } 
+    });
     
     public UserWindow(User user){
         UserWindow.m_user = user;
@@ -150,33 +159,42 @@ public class UserWindow extends JFrame
             // 1st column
             
             gbc.insets = new Insets(5,5,5,5);
+            gbc.gridwidth = 2;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.gridx = 0;
             gbc.gridy = 0;
             userLayout.add(PLAY_GACHA_LABEL_TITLE,gbc);
             
+            gbc.gridwidth = 2;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridheight = 2;
+            gbc.fill = GridBagConstraints.VERTICAL;
             gbc.gridx = 0;
             gbc.gridy = 1;
+            PLAY_GACHA_TEXTFIELD_ITEM.setHorizontalAlignment(SwingConstants.CENTER);
             PLAY_GACHA_TEXTFIELD_ITEM.setEditable(false);
             userLayout.add(PLAY_GACHA_TEXTFIELD_ITEM,gbc);
             
+            gbc.gridwidth = 2;
+            gbc.gridheight = 1;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.gridx = 0;
-            gbc.gridy = 2;
+            gbc.gridy = 3;
             userLayout.add(PLAY_GACHA_BUTTON_ROLL,gbc);
             
             // 2nd column
             
-            gbc.gridx = 1;
-            gbc.gridy = 0;
+            gbc.gridx = 2;
+            gbc.gridy = 1;
+            PLAY_GACHA_LABEL_GAMEPOINTS.setText(PLAY_GACHA_LABEL_GAMEPOINTS.getText()+m_user.getGP());
             userLayout.add(PLAY_GACHA_LABEL_GAMEPOINTS,gbc);
             
-            gbc.gridx = 1;
-            gbc.gridy = 1;
-            PLAY_GACHA_LABEL_GP_VALUE.setText(new Integer(m_user.getGP()).toString());
-            userLayout.add(PLAY_GACHA_LABEL_GP_VALUE,gbc);
-            
-            
-            gbc.gridx = 1;
+            gbc.gridx = 2;
             gbc.gridy = 2;
+            userLayout.add(PLAY_GACHA_BUTTON_SHOWITEMS,gbc);
+            
+            gbc.gridx = 2;
+            gbc.gridy = 3;
             userLayout.add(PLAY_GACHA_BUTTON_BACK,gbc);
             
             
@@ -341,18 +359,33 @@ public class UserWindow extends JFrame
         }
         
         if(e.getSource() == PLAY_GACHA_BUTTON_ROLL){
-            System.out.println("Rolling rollers");
-            gachaRoll();
+            if(PLAY_GACHA_BUTTON_ROLL.getText()=="ROLL"){
+                
+                m_timer.start();
+                PLAY_GACHA_BUTTON_ROLL.setText("STOP");
+            }
+            
+            else{
+                GachaItem rolled = gachaRoll();
+                m_timer.stop();
+                PLAY_GACHA_BUTTON_ROLL.setText("ROLL");
+                JOptionPane.showMessageDialog(rootPane, "You rolled a "+rolled.getName(),"Congratulations!",JOptionPane.INFORMATION_MESSAGE);
+            }
         }
         
         if(e.getSource() == PLAY_GACHA_BUTTON_BACK){
-            System.out.println("Backityback");
-            m_bpanelChangeProfileHasOperation = false;
-            m_bpanelPlayGachaHasOperation = false;
-            PLAY_GACHA_BUTTON_BACK.removeActionListener(this);
-            refreshFrame();
-            return;
+            int c = JOptionPane.showConfirmDialog(rootPane, 
+                    "Are you sure you leave?", "Back", 
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            
+            if(c == JOptionPane.OK_OPTION){
+                m_bpanelChangeProfileHasOperation = false;
+                m_bpanelPlayGachaHasOperation = false;
+                PLAY_GACHA_BUTTON_BACK.removeActionListener(this);
+                refreshFrame();
+            }
         }
+
         
         
     }
@@ -372,28 +405,10 @@ public class UserWindow extends JFrame
         }
         else{
             if(0 != CHANGE_PROFILE_PASSFIELD_USER.getPassword().length)
-                newPass = array2String(CHANGE_PROFILE_PASSFIELD_USER.getPassword());
+                newPass = String.copyValueOf(CHANGE_PROFILE_PASSFIELD_USER.getPassword());
         }
         
         SQLCore.setPassword(m_user.getUID(), newPass);
-    }
-    
-    public String array2String(char[] array){
-        String string = "";
-        for(char x:array){
-            string+=x;
-        }
-        
-        return string;
-        
-    }
-    
-    public void gachaRoll(){
-        GachaItem get = box.roll();
-        
-        PLAY_GACHA_TEXTFIELD_ITEM.setText(get.getName());
-        
-        SQLCore.itemOwn(m_user.getUID(), get);
     }
 
     @Override
@@ -407,6 +422,15 @@ public class UserWindow extends JFrame
     
     public static void main(String args[]){
         UserWindow x = new UserWindow(new User(2));
+    }
+    
+    public GachaItem gachaRoll(){
+        GachaItem item = box.roll();
+        PLAY_GACHA_TEXTFIELD_ITEM.setText(item.toString());
+        
+        SQLCore.itemOwn(m_user.getUID(), item);
+        
+        return item;
     }
 }
 

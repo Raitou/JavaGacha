@@ -4,6 +4,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -41,11 +42,13 @@ public interface UserComponents {
     */
     
     public final static JLabel PLAY_GACHA_LABEL_TITLE=new JLabel("JAVA HEROES ROULETTE",JLabel.CENTER);
-    public final static JLabel PLAY_GACHA_LABEL_GAMEPOINTS = new JLabel("Game Points",JLabel.CENTER);
-    public final static JLabel PLAY_GACHA_LABEL_GP_VALUE = new JLabel("",JLabel.CENTER);
+    public final static JLabel PLAY_GACHA_LABEL_GAMEPOINTS = new JLabel("GP: ",JLabel.CENTER);
     public final static JButton PLAY_GACHA_BUTTON_ROLL=new JButton("ROLL");
+    public final static JButton PLAY_GACHA_BUTTON_SHOWITEMS = new JButton("SHOW ITEMS");
     public final static JButton PLAY_GACHA_BUTTON_BACK=new JButton("BACK");
     public final JTextField PLAY_GACHA_TEXTFIELD_ITEM=new JTextField("",10);
+    
+    
     
     
 }
