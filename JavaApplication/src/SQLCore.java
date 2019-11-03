@@ -241,8 +241,8 @@ public class SQLCore extends SQLDriver implements AuthLevel {
     
     public static ArrayList<GachaItem> getItemsOf(int UID){
         ArrayList<GachaItem> gachaItems = new ArrayList<>();
-        String statement = "SELECT Item_ID, Item_Type, Item_Name FROM ItemInfoList, ItemOwnership WHERE ItemOwnership.UserID ="
-                + UID + "ORDER BY ItemOwnership.OwnershipID;";
+        String statement = "SELECT Item_ID, Item_Type, Item_Name, OwnershipID FROM ItemInfoList, ItemOwnership WHERE ItemOwnership.UserID ="
+                + UID + " AND ItemInfoList.Item_ID = ItemOwnership.ItemID ORDER BY ItemOwnership.OwnershipID;";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
                 ){
@@ -250,7 +250,8 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             while(res.next()){
                 gachaItems.add(new GachaItem(res.getInt("Item_ID"),
                         res.getInt("Item_Type"),
-                        res.getString("Item_Name")));
+                        res.getString("Item_Name"),
+                        res.getInt("OwnershipID")));
             }
             return gachaItems;
         }catch(SQLException ex){
@@ -319,6 +320,19 @@ public class SQLCore extends SQLDriver implements AuthLevel {
     public static void itemOwn(int userID, GachaItem item){
         String statement = "INSERT INTO ItemOwnership (UserID,ItemID) VALUES ("
                 + userID + "," + item.getId() + ");";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+            
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public static void removeItemOwn(int ownershipID){
+        String statement = "DELETE FROM ItemOwnership WHERE OwnershipID = " + ownershipID + ";";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
                 ){

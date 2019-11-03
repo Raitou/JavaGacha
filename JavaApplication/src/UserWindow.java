@@ -19,8 +19,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -31,18 +33,22 @@ public class UserWindow extends JFrame
     
     private static boolean IS_CHECKED = false;
     private static User m_user;
+    private static ArrayList<GachaItem> m_itemOwned;
     private static Component panelChangeProfile;
     private static Component panelLogout;
     private static Component panelPlayGacha;
+    private static Component panelInventory;
     private static boolean m_bpanelChangeProfileHasOperation = false;
     private static boolean m_bpanelPlayGachaHasOperation = false;
+    private static boolean m_bpanelInventoryHasOperation = false;
     
-    private static final GachaBox box = new GachaBox();
+    private static final GachaBox BOX = new GachaBox();
+    private static JList itemsList;
     
     public final Timer m_timer = new Timer(100,new ActionListener(){
         @Override
         public void actionPerformed(ActionEvent ae) {
-            PLAY_GACHA_TEXTFIELD_ITEM.setText(box.roll().toString());
+            PLAY_GACHA_TEXTFIELD_ITEM.setText(BOX.roll().toString());
         } 
     });
     
@@ -54,6 +60,7 @@ public class UserWindow extends JFrame
         super.setResizable(false);        
         
         initiateComponents();
+        m_itemOwned = SQLCore.getItemsOf(m_user.getUID());
                 
         super.pack();
         super.setLocationRelativeTo(null);
@@ -67,23 +74,29 @@ public class UserWindow extends JFrame
         //bottom, left, right, top
         gbc.insets = new Insets(10 , 10, 10, 10);
         
-        if((panelChangeProfile = initiateChangeProfile()) != null){
-            gbc.gridx = 1;
-            gbc.gridy = 0;
-            super.add(panelChangeProfile = initiateChangeProfile(), gbc);
-        }
-        
         if((panelPlayGacha = inititatePlayGacha()) != null){
             gbc.gridx = 0;
             gbc.gridy = 0;
             super.add(panelPlayGacha, gbc);
+        }   
+                    
+        if((panelInventory = initiateInventory()) != null){
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            super.add(panelInventory,gbc);
+        }
+        if((panelChangeProfile = initiateChangeProfile()) != null){
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            super.add(panelChangeProfile = initiateChangeProfile(), gbc);
         }
         
         if((panelLogout = initiateLogout()) != null){
-            gbc.gridx = 0;
+            gbc.gridx = 1;
             gbc.gridy = 1;
             super.add(panelLogout, gbc);
         }
+        
         
         loadListeners(true);
     }
@@ -94,6 +107,9 @@ public class UserWindow extends JFrame
             CHANGE_PROFILE_BUTTON_APPLY.addActionListener(this);
             PLAY_GACHA_BUTTON_ROLL.addActionListener(this);
             PLAY_GACHA_BUTTON_BACK.addActionListener(this);
+            BUTTON_INVENTORY.addActionListener(this);
+            INVENTORY_BUTTON_SELL.addActionListener(this);
+            INVENTORY_BUTTON_BACK.addActionListener(this);
             BUTTON_CHANGE_PROFILE.addActionListener(this);
             BUTTON_PLAY_GACHA.addActionListener(this);
             BUTTON_LOGOUT.addActionListener(this);
@@ -108,6 +124,9 @@ public class UserWindow extends JFrame
             CHANGE_PROFILE_BUTTON_APPLY.removeActionListener(this);
             PLAY_GACHA_BUTTON_ROLL.removeActionListener(this);
             PLAY_GACHA_BUTTON_BACK.removeActionListener(this);
+            BUTTON_INVENTORY.removeActionListener(this);
+            INVENTORY_BUTTON_SELL.removeActionListener(this);
+            INVENTORY_BUTTON_BACK.removeActionListener(this);
             BUTTON_CHANGE_PROFILE.removeActionListener(this);
             BUTTON_LOGOUT.removeActionListener(this);
             BUTTON_PLAY_GACHA.removeActionListener(this);
@@ -131,6 +150,9 @@ public class UserWindow extends JFrame
         if(panelLogout != null){
             super.remove(panelLogout);
         }
+        if(panelInventory != null){
+            super.remove(panelInventory);
+        }
         loadListeners(false);
     }
     
@@ -142,7 +164,8 @@ public class UserWindow extends JFrame
     
     private Component initiateLogout(){
         if(!(m_bpanelChangeProfileHasOperation ||
-                m_bpanelPlayGachaHasOperation
+                m_bpanelPlayGachaHasOperation  ||
+                m_bpanelInventoryHasOperation
                 )){
             return BUTTON_LOGOUT;
         }else {
@@ -154,6 +177,7 @@ public class UserWindow extends JFrame
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel userLayout = new JPanel(new GridBagLayout());
         if(!(m_bpanelChangeProfileHasOperation) &&
+                !(m_bpanelInventoryHasOperation)&&
                 (m_bpanelPlayGachaHasOperation)){
             
             // 1st column
@@ -172,6 +196,7 @@ public class UserWindow extends JFrame
             gbc.gridx = 0;
             gbc.gridy = 1;
             PLAY_GACHA_TEXTFIELD_ITEM.setHorizontalAlignment(SwingConstants.CENTER);
+            
             PLAY_GACHA_TEXTFIELD_ITEM.setEditable(false);
             userLayout.add(PLAY_GACHA_TEXTFIELD_ITEM,gbc);
             
@@ -186,21 +211,17 @@ public class UserWindow extends JFrame
             
             gbc.gridx = 2;
             gbc.gridy = 1;
-            PLAY_GACHA_LABEL_GAMEPOINTS.setText(PLAY_GACHA_LABEL_GAMEPOINTS.getText()+m_user.getGP());
+            PLAY_GACHA_LABEL_GAMEPOINTS.setText("GP: "+m_user.getGP());
             userLayout.add(PLAY_GACHA_LABEL_GAMEPOINTS,gbc);
-            
-            gbc.gridx = 2;
-            gbc.gridy = 2;
-            userLayout.add(PLAY_GACHA_BUTTON_SHOWITEMS,gbc);
-            
+
             gbc.gridx = 2;
             gbc.gridy = 3;
             userLayout.add(PLAY_GACHA_BUTTON_BACK,gbc);
-            
-            
+       
         } else {
             if(!(m_bpanelChangeProfileHasOperation ||
-                m_bpanelPlayGachaHasOperation
+                m_bpanelPlayGachaHasOperation ||
+                    m_bpanelInventoryHasOperation
                 )){
                return BUTTON_PLAY_GACHA;
             }else {
@@ -217,7 +238,8 @@ public class UserWindow extends JFrame
             Just wanting to have it a body o/
         */
         if(m_bpanelChangeProfileHasOperation &&
-                !(m_bpanelPlayGachaHasOperation)){
+                !(m_bpanelPlayGachaHasOperation) &&
+                !(m_bpanelInventoryHasOperation)){
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
             //bottom, left, right, top
@@ -282,9 +304,55 @@ public class UserWindow extends JFrame
             userLayout.add(CHANGE_PROFILE_BUTTON_APPLY, gbc);
         } else {
             if(!(m_bpanelChangeProfileHasOperation ||
-                m_bpanelPlayGachaHasOperation
+                m_bpanelPlayGachaHasOperation ||
+                m_bpanelInventoryHasOperation
                 )){
                return BUTTON_CHANGE_PROFILE;
+            }else {
+                return null;
+            }
+        }
+        return userLayout;
+    }
+    
+    public Component initiateInventory(){
+        GridBagConstraints gbc = new GridBagConstraints();
+        JPanel userLayout = new JPanel(new GridBagLayout());
+        
+        if(m_bpanelInventoryHasOperation &&
+                !(m_bpanelPlayGachaHasOperation) &&
+                !(m_bpanelChangeProfileHasOperation)){
+            // 1st column
+            
+            gbc.insets = new Insets(5,5,5,5);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            userLayout.add(INVENTORY_LABEL_INVENTORY,gbc);
+            
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            PLAY_GACHA_LABEL_GAMEPOINTS.setText("GP: "+m_user.getGP());
+            userLayout.add(PLAY_GACHA_LABEL_GAMEPOINTS,gbc);
+            
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            updateItemsList();
+            userLayout.add(itemsList,gbc);
+            
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            userLayout.add(INVENTORY_BUTTON_SELL,gbc);
+       
+            gbc.gridx = 1;
+            gbc.gridy = 2;
+            userLayout.add(INVENTORY_BUTTON_BACK,gbc);
+        } else {
+            if(!(m_bpanelInventoryHasOperation ||
+                 m_bpanelChangeProfileHasOperation ||
+                 m_bpanelPlayGachaHasOperation   
+                    )){
+               return BUTTON_INVENTORY;
             }else {
                 return null;
             }
@@ -315,17 +383,11 @@ public class UserWindow extends JFrame
         
         // Main Frame buttons
         if(e.getSource() == BUTTON_CHANGE_PROFILE){
-            m_bpanelChangeProfileHasOperation = true;
-            m_bpanelPlayGachaHasOperation = false;
-            BUTTON_CHANGE_PROFILE.removeActionListener(this);
-            refreshFrame();
+            buttonChangeProfile();
             return;
         }
         if(e.getSource() == BUTTON_PLAY_GACHA){
-            m_bpanelChangeProfileHasOperation = false;
-            m_bpanelPlayGachaHasOperation = true;
-            BUTTON_PLAY_GACHA.removeActionListener(this);
-            refreshFrame();
+            buttonPlayGacha();
             return;
         }
         
@@ -345,49 +407,61 @@ public class UserWindow extends JFrame
         // Panel buttons
         
         if(e.getSource() == CHANGE_PROFILE_BUTTON_APPLY){
-            changeProfileApply();
-            
-            if((IS_CHECKED ? !CHANGE_PROFILE_TEXTFIELD_PASS.getText().isEmpty() 
-                    : CHANGE_PROFILE_PASSFIELD_USER_CONFIRM.getPassword().length != 0)){
-                
-            }
-            m_bpanelChangeProfileHasOperation = false;
-            m_bpanelPlayGachaHasOperation = false;
-            CHANGE_PROFILE_BUTTON_APPLY.removeActionListener(this);
-            refreshFrame();
+            changeProfileButtonApply();
             return;
         }
         
         if(e.getSource() == PLAY_GACHA_BUTTON_ROLL){
-            if(PLAY_GACHA_BUTTON_ROLL.getText()=="ROLL"){
-                
-                m_timer.start();
-                PLAY_GACHA_BUTTON_ROLL.setText("STOP");
-            }
-            
-            else{
-                GachaItem rolled = gachaRoll();
-                m_timer.stop();
-                PLAY_GACHA_BUTTON_ROLL.setText("ROLL");
-                JOptionPane.showMessageDialog(rootPane, "You rolled a "+rolled.getName(),"Congratulations!",JOptionPane.INFORMATION_MESSAGE);
-            }
+            playGachaButtonRoll();
         }
         
         if(e.getSource() == PLAY_GACHA_BUTTON_BACK){
-            int c = JOptionPane.showConfirmDialog(rootPane, 
-                    "Are you sure you leave?", "Back", 
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-            
-            if(c == JOptionPane.OK_OPTION){
-                m_bpanelChangeProfileHasOperation = false;
-                m_bpanelPlayGachaHasOperation = false;
-                PLAY_GACHA_BUTTON_BACK.removeActionListener(this);
-                refreshFrame();
-            }
+            playGachaButtonBack();
         }
-
         
+        if(e.getSource() == BUTTON_INVENTORY){
+            playGachaButtonShowItems();
+        }
         
+        if(e.getSource() == INVENTORY_BUTTON_SELL){
+            inventoryButtonSell();
+        }
+        
+        if(e.getSource() == INVENTORY_BUTTON_BACK){
+            inventoryButtonBack();
+        }
+    }
+    
+    public void buttonPlayGacha(){
+        
+        m_bpanelChangeProfileHasOperation = false;
+        m_bpanelPlayGachaHasOperation = true;
+        m_bpanelInventoryHasOperation = false;
+        BUTTON_PLAY_GACHA.removeActionListener(this);
+        refreshFrame();
+    }
+    
+    public void buttonChangeProfile(){
+        m_bpanelChangeProfileHasOperation = true;
+        m_bpanelPlayGachaHasOperation = false;
+        m_bpanelInventoryHasOperation = false;
+        BUTTON_CHANGE_PROFILE.removeActionListener(this);
+        refreshFrame();
+    }
+    
+    public void changeProfileButtonApply(){
+        changeProfileApply();
+            
+        if((IS_CHECKED ? !CHANGE_PROFILE_TEXTFIELD_PASS.getText().isEmpty() 
+                : CHANGE_PROFILE_PASSFIELD_USER_CONFIRM.getPassword().length != 0)){
+            
+        }
+        
+        m_bpanelChangeProfileHasOperation = false;
+        m_bpanelPlayGachaHasOperation = false;
+        m_bpanelInventoryHasOperation = false;
+        CHANGE_PROFILE_BUTTON_APPLY.removeActionListener(this);
+        refreshFrame();
     }
     
     public void changeProfileApply(){
@@ -410,6 +484,115 @@ public class UserWindow extends JFrame
         
         SQLCore.setPassword(m_user.getUID(), newPass);
     }
+    
+    public void playGachaButtonRoll(){
+        if(PLAY_GACHA_BUTTON_ROLL.getText()=="ROLL"){
+            if(m_user.getGP() < GachaConstants.ROLL_PRICE){
+                JOptionPane.showMessageDialog(rootPane, 
+                        "Your current GP is not enough to roll",
+                        "Insufficient GP",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            if(!((JOptionPane.showConfirmDialog(rootPane, 
+                "Rolling will const you 3 GP.\n"
+                + "Are you sure you want to roll?",
+                "Confirmation",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE)) == JOptionPane.OK_OPTION)){
+                return;
+            }
+            
+            m_timer.start();
+            PLAY_GACHA_BUTTON_ROLL.setText("STOP");
+            PLAY_GACHA_BUTTON_BACK.setEnabled(false);
+            BUTTON_INVENTORY.setEnabled(false);
+            updateGPby(-GachaConstants.ROLL_PRICE);
+            refreshFrame();
+            
+        }
+            
+        else{
+            GachaItem rolled = gachaRoll();
+            m_timer.stop();
+            PLAY_GACHA_BUTTON_ROLL.setText("ROLL");
+            PLAY_GACHA_BUTTON_BACK.setEnabled(true);
+            BUTTON_INVENTORY.setEnabled(true);
+            JOptionPane.showMessageDialog(rootPane, 
+                    "You rolled a "+rolled.getName(),
+                    "Congratulations!",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    public void playGachaButtonBack(){
+        int c = JOptionPane.showConfirmDialog(rootPane, 
+                    "Are you sure you leave?", "Back", 
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            
+        if(c == JOptionPane.OK_OPTION){
+            m_bpanelChangeProfileHasOperation = false;
+            m_bpanelPlayGachaHasOperation = false;
+            m_bpanelInventoryHasOperation = false;
+            PLAY_GACHA_BUTTON_BACK.removeActionListener(this);
+            PLAY_GACHA_BUTTON_ROLL.removeActionListener(this);
+            refreshFrame();
+        }
+    }
+    
+    public void playGachaButtonShowItems(){
+        m_bpanelPlayGachaHasOperation = false;
+        m_bpanelInventoryHasOperation = true;
+        m_bpanelChangeProfileHasOperation = false;
+        BUTTON_INVENTORY.removeActionListener(this);
+        
+        refreshFrame();
+    }
+    
+    public void inventoryButtonSell(){
+        if(itemsList.isSelectionEmpty()){
+            JOptionPane.showMessageDialog(rootPane, 
+                    "Please select an item to sell",
+                    "Nothing is selected",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        else{
+            GachaItem selectedItem = m_itemOwned.get(itemsList.getSelectedIndex());
+            int c = JOptionPane.showConfirmDialog(rootPane, 
+                    "Sell for "+selectedItem.getPrice()+"GP?",
+                    "Sell Item?",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if(c == JOptionPane.OK_OPTION){
+                SQLCore.removeItemOwn(selectedItem.getOwnershipID());
+                updateGPby(selectedItem.getPrice());
+                
+                JOptionPane.showMessageDialog(rootPane, 
+                        "You received "+selectedItem.getPrice()+" GP",
+                        "Transaction Complete",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+        
+        m_itemOwned = SQLCore.getItemsOf(m_user.getUID());
+        refreshFrame();
+    }
+    
+    public void inventoryButtonBack(){
+        int c = JOptionPane.showConfirmDialog(rootPane, 
+                    "Are you sure you leave?", "Back", 
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            
+        if(c == JOptionPane.OK_OPTION){
+            m_bpanelChangeProfileHasOperation = false;
+            m_bpanelPlayGachaHasOperation = false;
+            m_bpanelInventoryHasOperation = false;
+            INVENTORY_BUTTON_SELL.removeActionListener(this);
+            INVENTORY_BUTTON_BACK.removeActionListener(this);
+            refreshFrame();
+        }
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -425,12 +608,38 @@ public class UserWindow extends JFrame
     }
     
     public GachaItem gachaRoll(){
-        GachaItem item = box.roll();
+        GachaItem item = BOX.roll();
         PLAY_GACHA_TEXTFIELD_ITEM.setText(item.toString());
         
         SQLCore.itemOwn(m_user.getUID(), item);
         
         return item;
     }
+    
+    public void updateGPby(int gp){
+        int currentGP = m_user.getGP();
+        currentGP += gp;
+        SQLCore.setGP(m_user.getUID(), currentGP);
+    }
+
+    private void updateItemsList() {
+        ArrayList<GachaItem> updatedList = SQLCore.getItemsOf(m_user.getUID());
+        String list[] = list2array(updatedList);
+        
+        itemsList = new JList<String>(list);
+        m_itemOwned = updatedList;
+        
+    }
+        
+    public static String[] list2array(ArrayList<GachaItem> collection){
+        String string[] = new String[collection.size()];
+        
+        for(int i = 0; i < collection.size(); i++){
+            string[i] = collection.get(i).toString();
+        }
+        
+        return string;
+    }
+
 }
 

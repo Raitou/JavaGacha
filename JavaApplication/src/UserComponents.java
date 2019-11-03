@@ -3,6 +3,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
@@ -20,6 +21,7 @@ public interface UserComponents {
     public final static JButton BUTTON_LOGOUT = new JButton("Logout");
     public final static JButton BUTTON_CHANGE_PROFILE = new JButton("Change Profile");
     public final static JButton BUTTON_PLAY_GACHA = new JButton("Play Gacha");
+    public final static JButton BUTTON_INVENTORY = new JButton("Inventory");
     
     
     /**
@@ -44,11 +46,14 @@ public interface UserComponents {
     public final static JLabel PLAY_GACHA_LABEL_TITLE=new JLabel("JAVA HEROES ROULETTE",JLabel.CENTER);
     public final static JLabel PLAY_GACHA_LABEL_GAMEPOINTS = new JLabel("GP: ",JLabel.CENTER);
     public final static JButton PLAY_GACHA_BUTTON_ROLL=new JButton("ROLL");
-    public final static JButton PLAY_GACHA_BUTTON_SHOWITEMS = new JButton("SHOW ITEMS");
     public final static JButton PLAY_GACHA_BUTTON_BACK=new JButton("BACK");
     public final JTextField PLAY_GACHA_TEXTFIELD_ITEM=new JTextField("",10);
     
-    
-    
+    /*
+        Show Items Components
+    */
+    public final static JLabel INVENTORY_LABEL_INVENTORY=new JLabel("INVENTORY",JLabel.CENTER);
+    public final static JButton INVENTORY_BUTTON_SELL = new JButton("SELL");
+    public final static JButton INVENTORY_BUTTON_BACK = new JButton("BACK");
     
 }

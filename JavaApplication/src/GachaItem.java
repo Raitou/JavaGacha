@@ -8,16 +8,24 @@
  *
  * @author 201811610
  */
-public class GachaItem {
+public class GachaItem implements GachaConstants{
     private String name;
     private int id;
     private int type;
+    private int ownershipID = -1;
     
     public GachaItem(int id, int type,String name){
         setName(name);
         setType(type);
         setId(id);
         
+    }
+    
+    public GachaItem(int id, int type, String name, int ownershipID){
+        setName(name);
+        setType(type);
+        setId(id);
+        setOwnership(ownershipID);
     }
     
     public String getName(){
@@ -32,6 +40,29 @@ public class GachaItem {
         return id;
     }
     
+    public int getPrice(){
+        int price;
+        switch(type){
+            case NORMAL:
+                price = NORMAL_PRICE;
+                break;
+            case RARE:
+                price = RARE_PRICE;
+                break;
+            case SUPER_RARE:
+                price = SR_PRICE;
+                break;
+            default:
+                price = -1;
+        }
+        
+        return price;
+    }
+    
+    public int getOwnershipID(){
+        return ownershipID;
+    }
+    
     public void setName(String name){
         this.name=name;
     }
@@ -44,14 +75,18 @@ public class GachaItem {
         this.id=id;
     }
     
+    public void setOwnership(int ownershipID){
+        this.ownershipID=ownershipID;
+    }
+    
     @Override
     public String toString(){
         String stars = "";
-        if(this.type >= GachaBox.NORMAL)
+        if(this.type >= GachaConstants.NORMAL)
             stars += "*";
-        if(this.type >= GachaBox.RARE)
+        if(this.type >= GachaConstants.RARE)
             stars += "*";
-        if(this.type >= GachaBox.SUPER_RARE)
+        if(this.type >= GachaConstants.SUPER_RARE)
             stars += "*";
         
         return this.getName()+stars;

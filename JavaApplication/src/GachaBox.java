@@ -13,14 +13,12 @@ import javax.swing.JOptionPane;
  *
  * @author 201811610
  */
-public class GachaBox {
+public class GachaBox implements GachaConstants{
     private static ArrayList<GachaItem> nItems;
     private static ArrayList<GachaItem> rItems;
     private static ArrayList<GachaItem> srItems;
     
-    public final static int NORMAL = 0;
-    public final static int RARE = 1;
-    public final static int SUPER_RARE = 2;
+
     
     public GachaBox(){
         fill();
@@ -72,4 +70,5 @@ public class GachaBox {
         
         return null;
     }
+
 }
