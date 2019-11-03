@@ -1,6 +1,7 @@
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -39,8 +40,19 @@ public interface AdminComponents {
     /**
         Edit User Components
     */
-    public final static JLabel LABEL_EDIT_USER = new JLabel("Edit User:");
-    public final static JLabel LABEL_SEARCH_USER = new JLabel("Search User", JLabel.CENTER);
-    public final static JButton BUTTON_SEARCH_USER = new JButton("Search");
+    public final static JLabel EDIT_USER_LABEL_EDIT_USER = new JLabel("Edit User:");
+    public final static JLabel EDIT_USER_LABEL_SEARCH_USER = new JLabel("Search User", JLabel.CENTER);
+    public final static JButton EDIT_USER_BUTTON_SEARCH_USER = new JButton("Search");
+    public final static JButton EDIT_USER_BUTTON_UPDATE_USER = new JButton("Update");
+    public final static JButton EDIT_USER_BUTTON_MINIMIZE = new JButton("Minimize");
+    public final JTextField EDIT_USER_TEXTFIELD_SEARCH_USER = new JTextField("", 12);
+    public final static JLabel EDIT_USER_LABEL_ACCESS = new JLabel("Access:", JLabel.CENTER);
+    public final static JLabel EDIT_USER_LABEL_NICK = new JLabel("Nickname:", JLabel.CENTER);
+    public final static JLabel EDIT_USER_LABEL_PASS = new JLabel("Password:", JLabel.CENTER);
+    public final JComboBox EDIT_USER_COMBOBOX_ACCESS = new JComboBox();
+    public final JTextField EDIT_USER_TEXTFIELD_NICK = new JTextField("", 12);
+    public final JPasswordField EDIT_USER_PASSFIELD_USER = new JPasswordField("", 12);
+    public final JPasswordField EDIT_USER_PASSFIELD_USER_CONFIRM = new JPasswordField("", 12);
+    
     
 }

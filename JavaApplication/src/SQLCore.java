@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,10 +16,32 @@ import java.util.TreeMap;
  *
  * @author raito
  */
-public class SQLCore extends SQLDriver {
+public class SQLCore extends SQLDriver implements AuthLevel {
     
-    //Not yet tested: Supposedly for admin purposes    
-    public static boolean addData(String statement){
+    /**
+     * Method that adds data in the MySQL Database
+     * 
+     * @param user
+     * @param password
+     * @param nickName
+     * @return  A Boolean that returns true if data is added else return false
+     */    
+    public static boolean addData(String user, String password, String nickName){
+        
+        String statement = "SELECT * FROM Users WHERE Login='" + user + "';";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            ResultSet res = query.executeQuery();
+            if(res.next()){
+                return false;
+            }
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
+        
+        statement = "INSERT INTO Users(Login, Password, Nickname) VALUES('" 
+                + user + "', '" + password + "', '" + nickName + "');";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
                 ){
@@ -30,6 +51,27 @@ public class SQLCore extends SQLDriver {
             return false;
         }
         return true;
+    }
+    
+    public static String[] searchUserInformation(String user){
+        String statement = "SELECT * FROM Users WHERE Login='"+ user + "';";
+        String arr[] = new String[3];
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            ResultSet res = query.executeQuery();
+            while(res.next()){
+                arr[0] = res.getString("Nickname");
+                arr[1] = res.getString("Password");
+                arr[2] = Integer.toString(getUserAuth(res.getInt("UserID")));
+                return arr;
+            }
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
+        
+        return null;
+    
     }
     
     public static int getUserAuth(int userID){
@@ -44,14 +86,14 @@ public class SQLCore extends SQLDriver {
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
         }
-        return 0;
+        return NORMAL_USER;
     }
     
     /**
-     Returns UserID[0] and Nickname[1] if account exists else returns null
+     Returns UserID[0], Nickname[1] and Login[2] if account exists else returns null
      * @param user
      * @param pass
-     * @return String[2]
+     * @return String[3] else null
      */
     public static String[] getLogin(String user, String pass){
         String arr[] = new String[3];

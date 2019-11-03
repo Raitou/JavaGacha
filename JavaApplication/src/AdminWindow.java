@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 public class AdminWindow extends JFrame 
         implements AdminComponents, ItemListener, ActionListener, KeyListener{
     
-    private static boolean IS_CHECKED = false;
+    private static boolean CREATE_USER_IS_CHECKED = false;
     private static String m_strUser;
     private static int m_intUID;
     private static Component panelUserAdd;
@@ -86,7 +86,9 @@ public class AdminWindow extends JFrame
             BUTTON_CREATE_USER.addActionListener(this);
             BUTTON_EDIT_USER.addActionListener(this);
             BUTTON_LOGOUT.addActionListener(this);
-            if(!IS_CHECKED){
+            EDIT_USER_BUTTON_MINIMIZE.addActionListener(this);
+            EDIT_USER_BUTTON_SEARCH_USER.addActionListener(this);
+            if(!CREATE_USER_IS_CHECKED){
                 CREATE_USER_PASSFIELD_USER.addKeyListener(this);
                 CREATE_USER_PASSFIELD_USER_CONFIRM.addKeyListener(this);
             } else {
@@ -98,7 +100,9 @@ public class AdminWindow extends JFrame
             BUTTON_CREATE_USER.removeActionListener(this);
             BUTTON_LOGOUT.removeActionListener(this);
             BUTTON_EDIT_USER.removeActionListener(this);
-            if(!IS_CHECKED){
+            EDIT_USER_BUTTON_MINIMIZE.removeActionListener(this);
+            EDIT_USER_BUTTON_SEARCH_USER.removeActionListener(this);
+            if(!CREATE_USER_IS_CHECKED){
                 CREATE_USER_PASSFIELD_USER.removeKeyListener(this);
                 CREATE_USER_PASSFIELD_USER_CONFIRM.removeKeyListener(this);
             } else {
@@ -106,8 +110,7 @@ public class AdminWindow extends JFrame
             }
         }
     }
-    
-    
+        
     private void removeComponents(){
         if(panelUserAdd != null){
             super.remove(panelUserAdd);
@@ -139,10 +142,72 @@ public class AdminWindow extends JFrame
     
     private Component inititateEditUser(){
         GridBagConstraints gbc = new GridBagConstraints();
-        JPanel userLayout = new JPanel(new GridBagLayout());
+        JPanel editUserLayout = new JPanel(new GridBagLayout());
         if(!(m_bpanelUserAddHasOperation) &&
                 (m_bpanelUserEditHasOperation)){
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            //bottom, left, right, top
+            gbc.insets = new Insets(5,0,0,0);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            editUserLayout.add(EDIT_USER_LABEL_EDIT_USER, gbc);
             
+            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            editUserLayout.add(EDIT_USER_LABEL_SEARCH_USER, gbc);
+            
+            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            editUserLayout.add(EDIT_USER_TEXTFIELD_SEARCH_USER, gbc);
+            
+            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.gridx = 2;
+            gbc.gridy = 1;
+            editUserLayout.add(EDIT_USER_BUTTON_SEARCH_USER, gbc);
+            
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            editUserLayout.add(EDIT_USER_LABEL_NICK, gbc);
+            
+            gbc.gridx = 1;
+            gbc.gridy = 2;
+            editUserLayout.add(EDIT_USER_TEXTFIELD_NICK, gbc);
+            EDIT_USER_TEXTFIELD_NICK.setEditable(false);
+            
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            editUserLayout.add(EDIT_USER_LABEL_ACCESS, gbc);
+            
+            gbc.gridx = 2;
+            gbc.gridy = 3;
+            editUserLayout.add(EDIT_USER_COMBOBOX_ACCESS, gbc);
+            EDIT_USER_COMBOBOX_ACCESS.setEnabled(false);
+            
+            gbc.gridx = 0;
+            gbc.gridy = 3;
+            editUserLayout.add(EDIT_USER_LABEL_PASS, gbc);
+            
+            gbc.gridx = 1;
+            gbc.gridy = 3;
+            editUserLayout.add(EDIT_USER_PASSFIELD_USER, gbc);
+            EDIT_USER_PASSFIELD_USER.setEditable(false);
+            
+            gbc.gridx = 1;
+            gbc.gridy = 4;
+            editUserLayout.add(EDIT_USER_PASSFIELD_USER_CONFIRM, gbc);
+            EDIT_USER_PASSFIELD_USER_CONFIRM.setEditable(false);
+            
+            gbc.gridx = 1;
+            gbc.gridy = 5;
+            editUserLayout.add(EDIT_USER_BUTTON_UPDATE_USER, gbc);
+            EDIT_USER_BUTTON_UPDATE_USER.setEnabled(false);
+            
+            gbc.gridx = 2;
+            gbc.gridy = 5;
+            editUserLayout.add(EDIT_USER_BUTTON_MINIMIZE, gbc);
             
         } else {
             if(!(m_bpanelUserAddHasOperation ||
@@ -153,7 +218,7 @@ public class AdminWindow extends JFrame
                 return null;
             }
         }
-        return userLayout;
+        return editUserLayout;
     }
     
     private Component initiateCreateUser(){
@@ -187,7 +252,7 @@ public class AdminWindow extends JFrame
             gbc.gridy = 2;
             userLayout.add(CREATE_USER_LABEL_PASS, gbc);
 
-            if(!IS_CHECKED){
+            if(!CREATE_USER_IS_CHECKED){
                 gbc.ipady = 0;
                 gbc.gridx = 1;  
                 gbc.gridy = 2;  
@@ -212,7 +277,7 @@ public class AdminWindow extends JFrame
             gbc.ipady = 0;
             gbc.gridwidth = 10;
             gbc.gridx = 0;
-            gbc.gridy = (IS_CHECKED ? 3 : 4 );
+            gbc.gridy = (CREATE_USER_IS_CHECKED ? 3 : 4 );
             userLayout.add(CREATE_USER_BUTTON_ADD_USER, gbc);
         } else {
             if(!(m_bpanelUserAddHasOperation ||
@@ -235,40 +300,120 @@ public class AdminWindow extends JFrame
     public void itemStateChanged(ItemEvent e) {
         if(e.getSource() == CREATE_USER_IS_VISIBLE){
             if(e.getStateChange() == 1){
-                IS_CHECKED = true;
+                CREATE_USER_IS_CHECKED = true;
                 refreshFrame();
             } else {
-                IS_CHECKED = false;
+                CREATE_USER_IS_CHECKED = false;
                 refreshFrame();
             }
         }
     }
     
+    private void buttonCreateUser(){
+        m_bpanelUserAddHasOperation = true;
+        m_bpanelUserEditHasOperation = false;
+        BUTTON_CREATE_USER.removeActionListener(this);
+        refreshFrame();
+    }
+    
+    private void buttonEditUser(){
+        m_bpanelUserAddHasOperation = false;
+        m_bpanelUserEditHasOperation = true;
+        BUTTON_EDIT_USER.removeActionListener(this);
+        refreshFrame();
+    }
+    
+    private void editUserButtonMinimize(){
+        m_bpanelUserAddHasOperation = false;
+        m_bpanelUserEditHasOperation = false;
+        EDIT_USER_BUTTON_MINIMIZE.removeActionListener(this);
+        refreshFrame();
+    }
+    
+    private void createUserButtonAddUser(){
+        if((CREATE_USER_IS_CHECKED ? !CREATE_USER_TEXTFIELD_PASS.getText().isEmpty() 
+                    : CREATE_USER_PASSFIELD_USER_CONFIRM.getPassword().length != 0)){
+            if(!(new String(CREATE_USER_PASSFIELD_USER_CONFIRM.getPassword()).equals(
+                    new String(CREATE_USER_PASSFIELD_USER.getPassword()))
+                    )){
+                JOptionPane.showMessageDialog(panelLogout, 
+                        "Password and Confirm Password is not equal", 
+                        "Warning", 
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            
+            if(!SQLCore.addData(
+                    CREATE_USER_TEXTFIELD_USER.getText(), 
+                    (
+                        CREATE_USER_IS_CHECKED ? 
+                                CREATE_USER_TEXTFIELD_PASS.getText() :
+                                new String(CREATE_USER_PASSFIELD_USER_CONFIRM.getPassword()
+                                )
+                            ),
+                    CREATE_USER_TEXTFIELD_USER.getText()
+            )){
+                JOptionPane.showMessageDialog(panelLogout, 
+                        "Data not sucesfully added due to connection error! or duplication of data", 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+            }else {
+                JOptionPane.showMessageDialog(panelLogout, 
+                        "Data succesfully added!", 
+                        "Information", 
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        }
+        CREATE_USER_TEXTFIELD_USER.setText("");
+        CREATE_USER_PASSFIELD_USER_CONFIRM.setText("");
+        CREATE_USER_PASSFIELD_USER.setText("");
+        CREATE_USER_TEXTFIELD_PASS.setText("");
+        m_bpanelUserAddHasOperation = false;
+        m_bpanelUserEditHasOperation = false;
+        CREATE_USER_BUTTON_ADD_USER.removeActionListener(this);
+        refreshFrame();
+    }
+    
+    private void editUserButtonSearchUser() {
+        if(EDIT_USER_TEXTFIELD_SEARCH_USER.getText().isEmpty()){
+            return;
+        }
+        String arr[] = SQLCore.searchUserInformation(EDIT_USER_TEXTFIELD_SEARCH_USER.getText());
+        if(arr == null){
+            return;
+        }
+        EDIT_USER_TEXTFIELD_NICK.setText(arr[0]);
+        EDIT_USER_PASSFIELD_USER.setText("********");
+        EDIT_USER_PASSFIELD_USER_CONFIRM.setText("********");
+        EDIT_USER_TEXTFIELD_NICK.setEditable(true);
+        EDIT_USER_PASSFIELD_USER.setEditable(true);
+        EDIT_USER_PASSFIELD_USER_CONFIRM.setEditable(true);
+        
+        
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == BUTTON_CREATE_USER){
-            m_bpanelUserAddHasOperation = true;
-            m_bpanelUserEditHasOperation = false;
-            BUTTON_CREATE_USER.removeActionListener(this);
-            refreshFrame();
+            buttonCreateUser();
             return;
         }
         if(e.getSource() == BUTTON_EDIT_USER){
-            m_bpanelUserAddHasOperation = false;
-            m_bpanelUserEditHasOperation = true;
-            BUTTON_EDIT_USER.removeActionListener(this);
-            refreshFrame();
+            buttonEditUser();
+            return;
+        }
+        if(e.getSource() == EDIT_USER_BUTTON_MINIMIZE){
+            editUserButtonMinimize();
             return;
         }
         if(e.getSource() == CREATE_USER_BUTTON_ADD_USER){
-            if((IS_CHECKED ? !CREATE_USER_TEXTFIELD_PASS.getText().isEmpty() 
-                    : CREATE_USER_PASSFIELD_USER_CONFIRM.getPassword().length != 0)){
-                
-            }
-            m_bpanelUserAddHasOperation = false;
-            m_bpanelUserEditHasOperation = false;
-            CREATE_USER_BUTTON_ADD_USER.removeActionListener(this);
-            refreshFrame();
+            createUserButtonAddUser();
+            return;
+        }
+        if(e.getSource() == EDIT_USER_BUTTON_SEARCH_USER){
+            editUserButtonSearchUser();
             return;
         }
         if(e.getSource() == BUTTON_LOGOUT){
