@@ -439,42 +439,41 @@ public class AdminWindow extends JFrame
             return;
         }
         
-        if(new String(EDIT_USER_PASSFIELD_USER.getPassword()).equals("********") ||
-                new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword()).equals("********")){
-            if(userInformation[0].equals(EDIT_USER_TEXTFIELD_NICK.getText())){
-                return;
-            }
-        }
+        String userInfo = "";
+        if(userInformation[3].equals(Integer.toString(ADMIN_USER)))
+            userInfo = "Administrator";
+        if(userInformation[3].equals(Integer.toString(NORMAL_USER)))
+            userInfo = "Normal User";
+        if(userInformation[3].equals(Integer.toString(BANNED_USER)))
+            userInfo = "Banned";
         
-        for(Map.Entry<Integer, String> entry : authLevel.entrySet()) {
-            Integer key = entry.getKey();
-            String value = entry.getValue();
-            if(key == Integer.parseInt(userInformation[3])){
+        
+        if(userInformation[0].equals(EDIT_USER_TEXTFIELD_NICK.getText()) &&
+                new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword()).equals("********")
+                ){
+            if(EDIT_USER_COMBOBOX_ACCESS.getSelectedItem() == userInfo){
                 return;
-            } else {
-                if(EDIT_USER_COMBOBOX_ACCESS.getSelectedItem() == value){
-                    SQLCore.setUserAuth(Integer.parseInt(userInformation[2]), key);
-                };
             }
         }
         
         if(!EDIT_USER_TEXTFIELD_NICK.getText().isEmpty()){
-            SQLCore.setNickname(Integer.parseInt(userInformation[2]), EDIT_USER_TEXTFIELD_NICK.getText());
-            authLevel.forEach((authLev, authString)->{
+                SQLCore.setNickname(Integer.parseInt(userInformation[2]), EDIT_USER_TEXTFIELD_NICK.getText());
+                userInformation[0] =  EDIT_USER_TEXTFIELD_NICK.getText();
+        }
+        
+        authLevel.forEach((authLev, authString)->{
                 if(EDIT_USER_COMBOBOX_ACCESS.getSelectedItem() == authString){
                     SQLCore.setUserAuth(Integer.parseInt(userInformation[2]), authLev);
                 };
-            });
-            
-        }
+        });
         
         if((new String(EDIT_USER_PASSFIELD_USER.getPassword())
                 .equals(new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword())))){
-           if(new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword()).equals("********")){
-               return;
-           }
-           SQLCore.setPassword(Integer.parseInt(userInformation[2]), 
+           if(!new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword()).equals("********")){
+               SQLCore.setPassword(Integer.parseInt(userInformation[2]), 
                    new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword()));
+           }
+           
         }
         JOptionPane.showMessageDialog(panelUserEdit, "Data succesfully updated!", "Information", JOptionPane.INFORMATION_MESSAGE);
         editUserButtonMinimize();       
