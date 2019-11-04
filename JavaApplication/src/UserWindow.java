@@ -256,6 +256,7 @@ public class UserWindow extends JFrame
             gbc.ipady = 0;
             gbc.gridx = 1;  
             gbc.gridy = 1;  
+            CHANGE_PROFILE_TEXTFIELD_USER.setEditable(false);
             CHANGE_PROFILE_TEXTFIELD_USER.setText(SQLCore.getUsername(m_user.getUID()));
             userLayout.add(CHANGE_PROFILE_TEXTFIELD_USER, gbc);
             
@@ -466,9 +467,6 @@ public class UserWindow extends JFrame
     
     public void changeProfileApply(){
         
-        if(!CHANGE_PROFILE_TEXTFIELD_USER.getText().isEmpty())
-            SQLCore.setUsername(m_user.getUID(), CHANGE_PROFILE_TEXTFIELD_USER.getText());
-        
         if(!CHANGE_PROFILE_TEXTFIELD_NICKNAME.getText().isEmpty())
             SQLCore.setNickname(m_user.getUID(), CHANGE_PROFILE_TEXTFIELD_NICKNAME.getText());
         
@@ -496,7 +494,7 @@ public class UserWindow extends JFrame
             }
             
             if(!((JOptionPane.showConfirmDialog(rootPane, 
-                "Rolling will const you 3 GP.\n"
+                "Rolling will cost you "+GachaConstants.ROLL_PRICE+"GP.\n"
                 + "Are you sure you want to roll?",
                 "Confirmation",
                 JOptionPane.OK_CANCEL_OPTION,
@@ -569,7 +567,7 @@ public class UserWindow extends JFrame
                 updateGPby(selectedItem.getPrice());
                 
                 JOptionPane.showMessageDialog(rootPane, 
-                        "You received "+selectedItem.getPrice()+" GP",
+                        "You received "+selectedItem.getPrice()+"GP",
                         "Transaction Complete",
                         JOptionPane.INFORMATION_MESSAGE);
             }

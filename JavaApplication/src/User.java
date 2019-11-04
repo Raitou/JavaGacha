@@ -52,13 +52,4 @@ public class User {
         SQLCore.setGP(userID, currentGP);
     }
     
-    public void refreshUser(){
-        username = SQLCore.getUsername(userID);
-        nickname = SQLCore.getNickname(userID);
-    }
-    
-    public void saveUser(){
-        System.out.println("not supported yet");
-    }
-    
 }

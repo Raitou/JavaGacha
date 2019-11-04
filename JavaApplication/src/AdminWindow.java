@@ -19,13 +19,17 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedHashMap;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class AdminWindow extends JFrame 
-        implements AdminComponents, ItemListener, ActionListener, KeyListener{
+        implements AdminComponents, ItemListener, ActionListener, KeyListener, AuthLevel{
     
+    
+    private static LinkedHashMap<Integer, String> authLevel = null; 
+    private static String userInformation[] = null;
     private static boolean CREATE_USER_IS_CHECKED = false;
     private static String m_strUser;
     private static int m_intUID;
@@ -39,6 +43,12 @@ public class AdminWindow extends JFrame
     
     public AdminWindow(User user){
         AdminWindow.m_user = user;
+        
+        authLevel = new LinkedHashMap<>();
+        authLevel.put(ADMIN_USER, "Administrator");
+        authLevel.put(NORMAL_USER, "Normal User");
+        authLevel.put(BANNED_USER, "Banned User");
+        
         
         super.setTitle("Admin Window");
         super.setLayout(new GridBagLayout());
@@ -162,6 +172,7 @@ public class AdminWindow extends JFrame
             gbc.gridx = 1;
             gbc.gridy = 1;
             editUserLayout.add(EDIT_USER_TEXTFIELD_SEARCH_USER, gbc);
+            EDIT_USER_TEXTFIELD_SEARCH_USER.setText("");
             
             gbc.insets = new Insets(5, 5, 5, 5);
             gbc.gridx = 2;
@@ -176,6 +187,7 @@ public class AdminWindow extends JFrame
             gbc.gridy = 2;
             editUserLayout.add(EDIT_USER_TEXTFIELD_NICK, gbc);
             EDIT_USER_TEXTFIELD_NICK.setEditable(false);
+            EDIT_USER_TEXTFIELD_NICK.setText("");     
             
             gbc.gridx = 2;
             gbc.gridy = 2;
@@ -185,6 +197,7 @@ public class AdminWindow extends JFrame
             gbc.gridy = 3;
             editUserLayout.add(EDIT_USER_COMBOBOX_ACCESS, gbc);
             EDIT_USER_COMBOBOX_ACCESS.setEnabled(false);
+            EDIT_USER_COMBOBOX_ACCESS.removeAllItems();
             
             gbc.gridx = 0;
             gbc.gridy = 3;
@@ -194,11 +207,13 @@ public class AdminWindow extends JFrame
             gbc.gridy = 3;
             editUserLayout.add(EDIT_USER_PASSFIELD_USER, gbc);
             EDIT_USER_PASSFIELD_USER.setEditable(false);
+            EDIT_USER_PASSFIELD_USER.setText("");
             
             gbc.gridx = 1;
             gbc.gridy = 4;
             editUserLayout.add(EDIT_USER_PASSFIELD_USER_CONFIRM, gbc);
             EDIT_USER_PASSFIELD_USER_CONFIRM.setEditable(false);
+            EDIT_USER_PASSFIELD_USER_CONFIRM.setText("");
             
             gbc.gridx = 1;
             gbc.gridy = 5;
@@ -208,6 +223,9 @@ public class AdminWindow extends JFrame
             gbc.gridx = 2;
             gbc.gridy = 5;
             editUserLayout.add(EDIT_USER_BUTTON_MINIMIZE, gbc);
+            
+            
+            
             
         } else {
             if(!(m_bpanelUserAddHasOperation ||
@@ -327,6 +345,7 @@ public class AdminWindow extends JFrame
         m_bpanelUserAddHasOperation = false;
         m_bpanelUserEditHasOperation = false;
         EDIT_USER_BUTTON_MINIMIZE.removeActionListener(this);
+        EDIT_USER_BUTTON_UPDATE_USER.setEnabled(false);
         refreshFrame();
     }
     
@@ -380,17 +399,26 @@ public class AdminWindow extends JFrame
         if(EDIT_USER_TEXTFIELD_SEARCH_USER.getText().isEmpty()){
             return;
         }
-        String arr[] = SQLCore.searchUserInformation(EDIT_USER_TEXTFIELD_SEARCH_USER.getText());
-        if(arr == null){
+        userInformation = SQLCore.searchUserInformation(EDIT_USER_TEXTFIELD_SEARCH_USER.getText());
+        if(userInformation == null){
             return;
         }
-        EDIT_USER_TEXTFIELD_NICK.setText(arr[0]);
+        EDIT_USER_TEXTFIELD_NICK.setText(userInformation[0]);
         EDIT_USER_PASSFIELD_USER.setText("********");
         EDIT_USER_PASSFIELD_USER_CONFIRM.setText("********");
         EDIT_USER_TEXTFIELD_NICK.setEditable(true);
         EDIT_USER_PASSFIELD_USER.setEditable(true);
         EDIT_USER_PASSFIELD_USER_CONFIRM.setEditable(true);
-        
+        EDIT_USER_BUTTON_UPDATE_USER.setEnabled(true);
+        EDIT_USER_COMBOBOX_ACCESS.removeAllItems();
+        authLevel.forEach((authLev, authString)->{
+            EDIT_USER_COMBOBOX_ACCESS.addItem(authString);
+        }
+        );
+        EDIT_USER_COMBOBOX_ACCESS.setEnabled(true);
+    }
+    
+    private void editUserButtonUpdateUser(){
         
     }
     
@@ -414,6 +442,10 @@ public class AdminWindow extends JFrame
         }
         if(e.getSource() == EDIT_USER_BUTTON_SEARCH_USER){
             editUserButtonSearchUser();
+            return;
+        }
+        if(e.getSource() == EDIT_USER_BUTTON_UPDATE_USER){
+            editUserButtonUpdateUser();
             return;
         }
         if(e.getSource() == BUTTON_LOGOUT){

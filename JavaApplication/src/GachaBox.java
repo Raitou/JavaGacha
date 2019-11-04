@@ -50,19 +50,21 @@ public class GachaBox implements GachaConstants{
         GachaItem item=null;
         
         Random r = new Random();
+        double rng_ = r.nextDouble();
+        
         int rng = r.nextInt(100);
-        if(rng < 60){
+        if(rng_ < 0.6){
             int rng2 = r.nextInt(nItems.size());
             item = nItems.get(rng2);
             return item;
         }
-        if(rng < 80){
+        if(rng_ < 0.99){
             int rng2 = r.nextInt(rItems.size());
             item = rItems.get(rng2);
             return item;
         }
         
-        if(rng < 100){
+        if(rng_ < 1){
             int rng2 = r.nextInt(srItems.size());
             item = srItems.get(rng2);
             return item;
