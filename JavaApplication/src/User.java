@@ -25,8 +25,9 @@ public class User {
     public User(String username, String password){
         String userData[] = SQLCore.getLogin(username, password);
         userID = Integer.parseInt(userData[0]);
-        this.username = userData[1];
-        this.nickname = userData[2];
+        this.nickname = userData[1];
+        this.username = userData[2];
+        
     }
     
     public int getUID(){

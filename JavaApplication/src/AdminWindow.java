@@ -20,6 +20,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -49,7 +50,7 @@ public class AdminWindow extends JFrame
         authLevel.put(NORMAL_USER, "Normal User");
         authLevel.put(BANNED_USER, "Banned User");
         
-        
+        System.out.println(authLevel);
         super.setTitle("Admin Window");
         super.setLayout(new GridBagLayout());
         super.setResizable(false);        
@@ -98,6 +99,7 @@ public class AdminWindow extends JFrame
             BUTTON_LOGOUT.addActionListener(this);
             EDIT_USER_BUTTON_MINIMIZE.addActionListener(this);
             EDIT_USER_BUTTON_SEARCH_USER.addActionListener(this);
+            EDIT_USER_BUTTON_UPDATE_USER.addActionListener(this);
             if(!CREATE_USER_IS_CHECKED){
                 CREATE_USER_PASSFIELD_USER.addKeyListener(this);
                 CREATE_USER_PASSFIELD_USER_CONFIRM.addKeyListener(this);
@@ -112,6 +114,7 @@ public class AdminWindow extends JFrame
             BUTTON_EDIT_USER.removeActionListener(this);
             EDIT_USER_BUTTON_MINIMIZE.removeActionListener(this);
             EDIT_USER_BUTTON_SEARCH_USER.removeActionListener(this);
+            EDIT_USER_BUTTON_UPDATE_USER.removeActionListener(this);
             if(!CREATE_USER_IS_CHECKED){
                 CREATE_USER_PASSFIELD_USER.removeKeyListener(this);
                 CREATE_USER_PASSFIELD_USER_CONFIRM.removeKeyListener(this);
@@ -413,13 +416,68 @@ public class AdminWindow extends JFrame
         EDIT_USER_COMBOBOX_ACCESS.removeAllItems();
         authLevel.forEach((authLev, authString)->{
             EDIT_USER_COMBOBOX_ACCESS.addItem(authString);
-        }
-        );
+        });
+        EDIT_USER_COMBOBOX_ACCESS.setSelectedItem(authLevel.get(SQLCore.getUserAuth(Integer.parseInt(userInformation[2]))));
         EDIT_USER_COMBOBOX_ACCESS.setEnabled(true);
     }
     
     private void editUserButtonUpdateUser(){
+        if(EDIT_USER_TEXTFIELD_NICK.getText().isEmpty()){
+            JOptionPane.showMessageDialog(panelUserEdit, "Nickname is Empty", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         
+        if(EDIT_USER_PASSFIELD_USER.getPassword().length == 0 ||
+               EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword().length == 0 ){
+            JOptionPane.showMessageDialog(panelUserEdit, "Password is Empty", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if(!(new String(EDIT_USER_PASSFIELD_USER.getPassword())
+                .equals(new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword())))){
+            JOptionPane.showMessageDialog(panelUserEdit, "Password is not the same with confirm password", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if(new String(EDIT_USER_PASSFIELD_USER.getPassword()).equals("********") ||
+                new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword()).equals("********")){
+            if(userInformation[0].equals(EDIT_USER_TEXTFIELD_NICK.getText())){
+                return;
+            }
+        }
+        
+        for(Map.Entry<Integer, String> entry : authLevel.entrySet()) {
+            Integer key = entry.getKey();
+            String value = entry.getValue();
+            if(key == Integer.parseInt(userInformation[3])){
+                return;
+            } else {
+                if(EDIT_USER_COMBOBOX_ACCESS.getSelectedItem() == value){
+                    SQLCore.setUserAuth(Integer.parseInt(userInformation[2]), key);
+                };
+            }
+        }
+        
+        if(!EDIT_USER_TEXTFIELD_NICK.getText().isEmpty()){
+            SQLCore.setNickname(Integer.parseInt(userInformation[2]), EDIT_USER_TEXTFIELD_NICK.getText());
+            authLevel.forEach((authLev, authString)->{
+                if(EDIT_USER_COMBOBOX_ACCESS.getSelectedItem() == authString){
+                    SQLCore.setUserAuth(Integer.parseInt(userInformation[2]), authLev);
+                };
+            });
+            
+        }
+        
+        if((new String(EDIT_USER_PASSFIELD_USER.getPassword())
+                .equals(new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword())))){
+           if(new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword()).equals("********")){
+               return;
+           }
+           SQLCore.setPassword(Integer.parseInt(userInformation[2]), 
+                   new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword()));
+        }
+        JOptionPane.showMessageDialog(panelUserEdit, "Data succesfully updated!", "Information", JOptionPane.INFORMATION_MESSAGE);
+        editUserButtonMinimize();       
     }
     
     @Override

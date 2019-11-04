@@ -479,6 +479,15 @@ public class UserWindow extends JFrame
             if(0 != CHANGE_PROFILE_PASSFIELD_USER.getPassword().length)
                 newPass = String.copyValueOf(CHANGE_PROFILE_PASSFIELD_USER.getPassword());
         }
+        if(!(new String(CHANGE_PROFILE_PASSFIELD_USER_CONFIRM.getPassword()).equals(
+                    new String(CHANGE_PROFILE_PASSFIELD_USER.getPassword()))
+                    )){
+                JOptionPane.showMessageDialog(panelLogout, 
+                        "Password and Confirm Password is not equal", 
+                        "Warning", 
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
         
         SQLCore.setPassword(m_user.getUID(), newPass);
     }

@@ -49,7 +49,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             query.executeUpdate();
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -57,7 +57,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
     
     public static String[] searchUserInformation(String user){
         String statement = "SELECT * FROM Users WHERE Login='"+ user + "';";
-        String arr[] = new String[3];
+        String arr[] = new String[4];
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
                 ){
@@ -65,7 +65,8 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             while(res.next()){
                 arr[0] = res.getString("Nickname");
                 arr[1] = res.getString("Password");
-                arr[2] = Integer.toString(getUserAuth(res.getInt("UserID")));
+                arr[2] = res.getString("UserID");
+                arr[3] = Integer.toString(getUserAuth(Integer.parseInt(arr[2])));
                 return arr;
             }
         }catch(SQLException ex){
@@ -87,9 +88,25 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return NORMAL_USER;
+    }
+    
+    public static int getUserAuthR(int userID){
+        String statement = "SELECT AuthLevel FROM userauth WHERE UserID="+ userID +";";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            ResultSet res = query.executeQuery();
+            while(res.next()){
+                return res.getInt("AuthLevel");
+            }
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+        return Integer.MAX_VALUE;
     }
     
     /**
@@ -116,7 +133,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -137,7 +154,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -156,7 +173,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -175,7 +192,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -194,7 +211,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -213,7 +230,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             }
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return -1;
     }
@@ -234,7 +251,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             return gachaItems;
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -256,7 +273,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             return gachaItems;
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;        
     }
@@ -271,7 +288,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
   
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -285,7 +302,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
   
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -299,7 +316,34 @@ public class SQLCore extends SQLDriver implements AuthLevel {
   
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public static void setUserAuth(int userID, int authLevel){
+        String statement = "";
+        if(getUserAuthR(userID) == Integer.MAX_VALUE){
+            statement = "INSERT INTO UserAuth(UserID, AuthLevel) VALUES(" + userID + ", " + authLevel + ");";
+            try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+            }catch(SQLException ex){
+                System.out.println(ex.getLocalizedMessage());
+                JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+            }
+            return;
+        }
+        
+        statement = "UPDATE UserAuth SET AuthLevel = " + authLevel + " WHERE UserID =" + userID + ";"; 
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+  
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -313,7 +357,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -327,7 +371,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -340,7 +384,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
-            JOptionPane.showMessageDialog(null, "SQL Exception!", "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
     
