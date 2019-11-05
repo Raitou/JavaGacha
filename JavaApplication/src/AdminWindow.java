@@ -159,10 +159,13 @@ public class AdminWindow extends JFrame
     
     
     private Component initiateItemManager(){
-        GridBagConstraints gbc = new GridBagConstraints();
+       GridBagConstraints gbc2 = new GridBagConstraints();
         JPanel itemManagerLayout = new JPanel(new GridBagLayout());
         if(!(m_bpanelUserAddHasOperation && m_bpanelUserEditHasOperation) &&
                 (m_bpanelItemManagerHasOperation)){
+            
+            GridBagConstraints gbc = new GridBagConstraints();
+            JPanel tableItemLayout = new JPanel(new GridBagLayout());
             gbc.fill = GridBagConstraints.HORIZONTAL;           
             
             gbc.insets = new Insets(10,10,10,10);
@@ -179,7 +182,19 @@ public class AdminWindow extends JFrame
                 }
             }
             ITEM_LIST.setModel(tableModel);
-            itemManagerLayout.add(ITEM_LIST_SCROLL, gbc);
+            tableItemLayout.add(ITEM_LIST_SCROLL, gbc);
+            
+            gbc2.fill = GridBagConstraints.HORIZONTAL;
+            itemManagerLayout.add(tableItemLayout);
+            gbc2.gridx = 0;
+            gbc2.gridy = 0;
+            itemManagerLayout.add(BUTTON_ADD_ITEM, gbc2);
+            gbc2.gridx = 1;
+            gbc2.gridy = 0;
+            itemManagerLayout.add(BUTTON_EDIT_ITEM, gbc2);
+            gbc2.gridx = 0;
+            gbc2.gridy = 1;
+            itemManagerLayout.add(BUTTON_SEARCH_ITEM, gbc2);
             
             
         } else {

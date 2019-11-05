@@ -7,7 +7,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -68,4 +67,7 @@ public interface AdminComponents {
         }
     };
     public final static JScrollPane ITEM_LIST_SCROLL = new JScrollPane(ITEM_LIST);
+    public final static JButton BUTTON_ADD_ITEM = new JButton("Add Item");
+    public final static JButton BUTTON_EDIT_ITEM = new JButton("Edit Item");
+    public final static JButton BUTTON_SEARCH_ITEM = new JButton("Search Item");
 }
