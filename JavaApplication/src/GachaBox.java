@@ -14,6 +14,11 @@ import javax.swing.JOptionPane;
  * @author 201811610
  */
 public class GachaBox implements GachaConstants{
+    /*
+    This class contains all the Items available in the Gacha
+    This represents the actual Gacha Vending machine
+    */
+    
     private static ArrayList<GachaItem> nItems;
     private static ArrayList<GachaItem> rItems;
     private static ArrayList<GachaItem> srItems;
@@ -25,7 +30,7 @@ public class GachaBox implements GachaConstants{
     }
     
     /*
-    fills the ArrayList instance variable with
+    fills the ArrayList instance variable with all items of all item types
     */
     private void fill(){
         nItems=SQLCore.getAllItems(NORMAL);
@@ -33,21 +38,12 @@ public class GachaBox implements GachaConstants{
         srItems=SQLCore.getAllItems(SUPER_RARE);
     }
     
-    public void listAll(){
-        System.out.print("Normal Items: ");
-        listItems(nItems);
-        System.out.print("Rare Items: ");
-        listItems(rItems);
-        System.out.print("Super Rare Items: ");
-        listItems(srItems);
-        
-    }
-    
-    public void listItems(ArrayList<GachaItem> x){
-        for(GachaItem y: x)
-            System.out.println(y);
-    }
-    
+    /*
+    returns a GachaItem based on random chance
+    The chance of getting a specific Item type is weighted
+    Normal items have a greater chance of being rolled than rare items
+    and so on
+    */
     public GachaItem roll(){
         GachaItem item=null;
         

@@ -27,14 +27,6 @@ public class SQLCore extends SQLDriver implements AuthLevel {
      * @param nickName
      * @return  A Boolean that returns true if data is added else return false
      */    
-    
-    /*
-    addData adds a new row to the Users table
-    the parameters are used as columns of the new row
-    
-    returns false if there is error in the SQL query
-    returns true if nothing is wrong
-    */
     public static boolean addData(String user, String password, String nickName){
         
         String statement = "SELECT * FROM Users WHERE Login='" + user + "';";

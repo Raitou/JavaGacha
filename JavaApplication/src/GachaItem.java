@@ -9,6 +9,12 @@
  * @author 201811610
  */
 public class GachaItem implements GachaConstants{
+    /*
+    This class represents the information regarding a single item in the Gacha
+    It contains name of the item, its ID in the database, its rarity type
+    and which user owns it
+    */
+    
     private String name;
     private int id;
     private int type;
