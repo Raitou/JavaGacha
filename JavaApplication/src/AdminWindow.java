@@ -31,6 +31,7 @@ public class AdminWindow extends JFrame
     
     private static LinkedHashMap<Integer, String> authLevel = null; 
     private static String userInformation[] = null;
+    private static String itemList[][] = null;
     private static boolean CREATE_USER_IS_CHECKED = false;
     private static String m_strUser;
     private static int m_intUID;
@@ -168,6 +169,15 @@ public class AdminWindow extends JFrame
             gbc.gridx = 0;
             gbc.gridy = 0;
             ITEM_LIST.setSize(300, 300);
+            tableModel = new DefaultTableModel();
+            tableModel.addColumn("Item_ID");
+            tableModel.addColumn("Item_Type");
+            tableModel.addColumn("Item_Name");
+            if((itemList = SQLCore.getAllItems()) != null){
+                for (String[] items : itemList) {
+                    tableModel.addRow(items);
+                }
+            }
             ITEM_LIST.setModel(new DefaultTableModel(new Object[] { "Item_ID", "Item_Type", "Item_Name" }, 0));
             itemManagerLayout.add(ITEM_LIST_SCROLL, gbc);
             
