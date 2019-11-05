@@ -68,4 +68,8 @@ public interface AdminComponents {
         }
     };
     public final static JScrollPane ITEM_LIST_SCROLL = new JScrollPane(ITEM_LIST);
+    public final static JButton BUTTON_ADD_ITEM = new JButton("ADD ITEM");
+    public final static JButton BUTTON_EDIT_ITEM = new JButton("EDIT ITEM");
+    public final static JButton BUTTON_DELETE_ITEM = new JButton("DELETE ITEM");
+    public final static JButton BUTTON_SEARCH_ITEM = new JButton("SEARCH ITEM");
 }
