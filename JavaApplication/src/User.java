@@ -9,7 +9,6 @@
  * @author Aevan
  */
 
-
 public class User {
     private int userID;
     private String username;
@@ -54,7 +53,12 @@ public class User {
         SQLCore.setGP(userID, currentGP);
     }
     
+    
+    /*
+    Keeps the User object up to date
+    */
     public void refresh(){
+        username = SQLCore.getUsername(userID);
         nickname = SQLCore.getNickname(userID);
     }
     

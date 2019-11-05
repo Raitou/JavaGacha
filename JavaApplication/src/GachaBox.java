@@ -24,6 +24,9 @@ public class GachaBox implements GachaConstants{
         fill();
     }
     
+    /*
+    fills the ArrayList instance variable with
+    */
     private void fill(){
         nItems=SQLCore.getAllItems(NORMAL);
         rItems=SQLCore.getAllItems(RARE);

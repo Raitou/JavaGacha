@@ -89,6 +89,6 @@ public class GachaItem implements GachaConstants{
         if(this.type >= GachaConstants.SUPER_RARE)
             stars += "*";
         
-        return this.getName()+stars;
+        return String.format("%s\n%s", name, stars);
     }
 }

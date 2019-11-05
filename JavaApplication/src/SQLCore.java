@@ -27,6 +27,14 @@ public class SQLCore extends SQLDriver implements AuthLevel {
      * @param nickName
      * @return  A Boolean that returns true if data is added else return false
      */    
+    
+    /*
+    addData adds a new row to the Users table
+    the parameters are used as columns of the new row
+    
+    returns false if there is error in the SQL query
+    returns true if nothing is wrong
+    */
     public static boolean addData(String user, String password, String nickName){
         
         String statement = "SELECT * FROM Users WHERE Login='" + user + "';";
@@ -55,6 +63,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return true;
     }
     
+    /*
+    searchUserInformation returns a String array of the columns of the row
+    Where username corresponds with the parameter
+    */
     public static String[] searchUserInformation(String user){
         String statement = "SELECT * FROM Users WHERE Login='"+ user + "';";
         String arr[] = new String[4];
@@ -77,6 +89,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
     
     }
     
+    /*
+    returns the integer Authentication level of a User
+    takes the integer userID as parameter
+    */
     public static int getUserAuth(int userID){
         String statement = "SELECT AuthLevel FROM userauth WHERE UserID="+ userID +";";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
@@ -93,6 +109,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return NORMAL_USER;
     }
     
+    /*
+    returns Integer.MAX_VALUE when a userAuth is not exist in the database;
+    This is returned to get if the user is previously an Admin User or a Banned User;
+    */
     public static int getUserAuthR(int userID){
         String statement = "SELECT AuthLevel FROM userauth WHERE UserID="+ userID +";";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
@@ -138,6 +158,12 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return null;
     }
     
+    /*
+    Returns the Nickname, UserID, Username as a String array that corresponds
+    with a userID
+    
+    Takes userID as a parameter
+    */
     public static String[] getLogin(int userID){
         String arr[] = new String[3];
         String statement = "SELECT Nickname, UserID, Login FROM USERS WHERE UserID='"
@@ -159,6 +185,11 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return null;
     }
     
+    /*
+    returns the username that corresponds with a userID as String
+    takes userID as parameter
+    */
+    
     public static String getUsername(int userID){
         String username;
         String statement = "SELECT Login, UserID FROM USERS WHERE UserID='" 
@@ -178,6 +209,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return null;
     }
     
+    /*
+    returns the password that corresponds with a userID as String
+    takes userID as parameter
+    */
     public static String getPassword(int userID){
         String password;
         String statement = "SELECT Password FROM USERS WHERE UserID='" 
@@ -197,6 +232,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return null;
     }
     
+    /*
+    returns the nickname that corresponds with a userID as String
+    takes userID as parameter
+    */
     public static String getNickname(int userID){
         String nickname;
         String statement = "SELECT Nickname FROM USERS WHERE UserID='" 
@@ -216,6 +255,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return null;
     }
     
+    /*
+    returns the GP that corresponds with a userID as String
+    takes userID as parameter
+    */
     public static int getGP(int userID){
         int gamePoints;
         String statement = "SELECT GamePoints FROM USERS WHERE UserID='" 
@@ -235,6 +278,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return -1;
     }
     
+    /*
+    Returns an ArrayList of GachaItem class of a specific item type in ItemInfoList table
+    takes ItemType as parameter
+    */
     public static ArrayList<GachaItem> getAllItems(int type){
         ArrayList<GachaItem> gachaItems = new ArrayList<>();
         String statement = "SELECT Item_ID,Item_Name,Item_Type FROM ItemInfoList WHERE Item_Type="
@@ -256,6 +303,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return null;
     }
     
+    /*
+    returns a 2d array of all Items in ItemInfoList
+    takes no parameter
+    */
     public static String[][] getAllItems(){
         String statement = "SELECT * FROM ItemInfoList;";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
@@ -278,6 +329,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return null;
     }
     
+    /*
+    returns the ArrayList of GachaItems that belongs to a user
+    takes userID as parameter
+    */
     public static ArrayList<GachaItem> getItemsOf(int UID){
         ArrayList<GachaItem> gachaItems = new ArrayList<>();
         String statement = "SELECT Item_ID, Item_Type, Item_Name, OwnershipID FROM ItemInfoList, ItemOwnership WHERE ItemOwnership.UserID ="
@@ -300,6 +355,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return null;        
     }
     
+    /*
+    sets the Username of a User in User table
+    takes userID and the new username as parameters
+    */
     public static void setUsername(int userID, String newUsername){
         String statement = "UPDATE Users SET Login = '" + newUsername
                 +"' WHERE UserID = "+ userID;
@@ -314,6 +373,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         }
     }
     
+    /*
+    sets the Nickname of a User in User table
+    takes userID and the new nickname as parameters
+    */
     public static void setNickname(int userID, String newNickname){
         String statement = "UPDATE Users SET Nickname = '" + newNickname
                 +"' WHERE UserID = "+ userID;
@@ -328,6 +391,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         }
     }
 
+    /*
+    sets the Password of a User in User table
+    takes userID and the new password as parameters
+    */
     public static void setPassword(int userID, String newPassword){
         String statement = "UPDATE Users SET Password = '" + newPassword
                 +"' WHERE UserID = "+ userID;
@@ -342,6 +409,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         }
     }
     
+    /*
+    sets the Authentication level of a user in UserAuth table
+    takes userID and the new Authlevel as parameter
+    */
     public static void setUserAuth(int userID, int authLevel){
         String statement = "";
         if(getUserAuthR(userID) == Integer.MAX_VALUE){
@@ -369,6 +440,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         }
     }
     
+    /*
+    sets the gamePoints of a user in UserAuth table
+    takes userID and the new GamePoints as parameter
+    */
     public static void setGP(int userID, int gamePoints){
         String statement = "UPDATE Users SET GamePoints = '" + gamePoints
                 +"' WHERE UserID = "+ userID;
@@ -383,6 +458,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         }
     }
     
+    /*
+    Adds a new row in ItemOwnership Table
+    takes userID and the GachaItem to be owned as parameters
+    */
     public static void itemOwn(int userID, GachaItem item){
         String statement = "INSERT INTO ItemOwnership (UserID,ItemID) VALUES ("
                 + userID + "," + item.getId() + ");";
@@ -397,6 +476,10 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         }
     }
     
+    /*
+    Deletes a row from ItemOwnership
+    takes ownershipID as parameter
+    */
     public static void removeItemOwn(int ownershipID){
         String statement = "DELETE FROM ItemOwnership WHERE OwnershipID = " + ownershipID + ";";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
@@ -409,6 +492,4 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-
 }

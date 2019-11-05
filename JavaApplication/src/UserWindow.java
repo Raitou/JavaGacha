@@ -274,16 +274,19 @@ public class UserWindow extends JFrame
                 gbc.ipady = 0;
                 gbc.gridx = 1;  
                 gbc.gridy = 3;  
+                CHANGE_PROFILE_PASSFIELD_USER.setText("********");
                 userLayout.add(CHANGE_PROFILE_PASSFIELD_USER, gbc);
 
                 gbc.ipady = 0;
                 gbc.gridx = 1;
                 gbc.gridy = 4;
+                CHANGE_PROFILE_PASSFIELD_USER_CONFIRM.setText("********");
                 userLayout.add(CHANGE_PROFILE_PASSFIELD_USER_CONFIRM, gbc);
             } else {
                 gbc.ipady = 0;
                 gbc.gridx = 1;  
                 gbc.gridy = 3;  
+                CHANGE_PROFILE_TEXTFIELD_PASS.setText("");
                 userLayout.add(CHANGE_PROFILE_TEXTFIELD_PASS, gbc);
             }
 
@@ -479,6 +482,7 @@ public class UserWindow extends JFrame
                 "Warning",
                 JOptionPane.ERROR_MESSAGE);
         }
+        
         
         m_bpanelChangeProfileHasOperation = false;
         m_bpanelPlayGachaHasOperation = false;

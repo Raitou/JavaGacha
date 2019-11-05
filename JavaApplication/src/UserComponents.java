@@ -31,8 +31,8 @@ public interface UserComponents {
     public final JTextField CHANGE_PROFILE_TEXTFIELD_USER = new JTextField("", 12);
     public final JTextField CHANGE_PROFILE_TEXTFIELD_NICKNAME = new JTextField("",12);
     public final JTextField CHANGE_PROFILE_TEXTFIELD_PASS = new JTextField("", 12);
-    public final JPasswordField CHANGE_PROFILE_PASSFIELD_USER = new JPasswordField("********", 12);
-    public final JPasswordField CHANGE_PROFILE_PASSFIELD_USER_CONFIRM = new JPasswordField("********", 12);
+    public final JPasswordField CHANGE_PROFILE_PASSFIELD_USER = new JPasswordField("", 12);
+    public final JPasswordField CHANGE_PROFILE_PASSFIELD_USER_CONFIRM = new JPasswordField("", 12);
     public final static JLabel CHANGE_PROFILE_LABEL_CREATE_USER = new JLabel("Change Profile:");
     public final static JLabel CHANGE_PROFILE_LABEL_USER = new JLabel("Username", JLabel.CENTER);
     public final static JLabel CHANGE_PROFILE_LABEL_NICKNAME = new JLabel("Nickname", JLabel.CENTER);
