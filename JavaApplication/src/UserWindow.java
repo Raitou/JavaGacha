@@ -45,12 +45,7 @@ public class UserWindow extends JFrame
     private static final GachaBox BOX = new GachaBox();
     private static JList itemsList;
     
-    public final Timer m_timer = new Timer(100,new ActionListener(){
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            PLAY_GACHA_TEXTFIELD_ITEM.setText(BOX.roll().toString());
-        } 
-    });
+    private final Timer m_timer = new Timer(100,this);
     
     public UserWindow(User user){
         UserWindow.m_user = user;
@@ -431,6 +426,10 @@ public class UserWindow extends JFrame
         if(e.getSource() == INVENTORY_BUTTON_BACK){
             inventoryButtonBack();
         }
+        
+        if(e.getSource() == m_timer){
+            PLAY_GACHA_TEXTFIELD_ITEM.setText(BOX.roll().toString());
+        } 
     }
     
     public void buttonPlayGacha(){
@@ -451,11 +450,35 @@ public class UserWindow extends JFrame
     }
     
     public void changeProfileButtonApply(){
-        changeProfileApply();
             
         if((IS_CHECKED ? !CHANGE_PROFILE_TEXTFIELD_PASS.getText().isEmpty() 
-                : CHANGE_PROFILE_PASSFIELD_USER_CONFIRM.getPassword().length != 0)){
+                : CHANGE_PROFILE_PASSFIELD_USER.getPassword().length != 0)
+                ||CHANGE_PROFILE_TEXTFIELD_NICKNAME.getText().isEmpty()){
+            String nickname;
+            String password;
+            nickname = CHANGE_PROFILE_TEXTFIELD_NICKNAME.getText();
+            password = IS_CHECKED ? CHANGE_PROFILE_TEXTFIELD_PASS.getText()
+                    : String.copyValueOf(CHANGE_PROFILE_PASSFIELD_USER.getPassword());
+            if((!IS_CHECKED)&& !password.equals(String.copyValueOf(CHANGE_PROFILE_PASSFIELD_USER_CONFIRM.getPassword()))){
+                JOptionPane.showMessageDialog(rootPane, 
+                        "Password confirm must match",
+                        "Warning",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             
+            if(changeProfileApply(nickname,password))
+                JOptionPane.showMessageDialog(rootPane,
+                    "Changes has been applied",
+                    "Information",
+                    JOptionPane.INFORMATION_MESSAGE);
+            
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, 
+                "Field/s are empty",
+                "Warning",
+                JOptionPane.ERROR_MESSAGE);
         }
         
         m_bpanelChangeProfileHasOperation = false;
@@ -465,35 +488,26 @@ public class UserWindow extends JFrame
         refreshFrame();
     }
     
-    public void changeProfileApply(){
+    public boolean changeProfileApply(String nickname, String password){
+        boolean modifiedFields = false;
         
-        if(!CHANGE_PROFILE_TEXTFIELD_NICKNAME.getText().isEmpty())
-            SQLCore.setNickname(m_user.getUID(), CHANGE_PROFILE_TEXTFIELD_NICKNAME.getText());
+        if(!nickname.equals(m_user.getNickname()))
+            modifiedFields = true;
+        if(!password.equals("********"))
+            modifiedFields = true;
         
-        String newPass = SQLCore.getPassword(m_user.getUID());
-        if(IS_CHECKED){
-            if(!CHANGE_PROFILE_TEXTFIELD_PASS.getText().isEmpty())
-                newPass = CHANGE_PROFILE_TEXTFIELD_PASS.getText();
+        if(modifiedFields){
+            SQLCore.setNickname(m_user.getUID(),nickname);
+            SQLCore.setPassword(m_user.getUID(),password);
+            m_user.refresh();
+            return true;
         }
-        else{
-            if(0 != CHANGE_PROFILE_PASSFIELD_USER.getPassword().length)
-                newPass = String.copyValueOf(CHANGE_PROFILE_PASSFIELD_USER.getPassword());
-        }
-        if(!(new String(CHANGE_PROFILE_PASSFIELD_USER_CONFIRM.getPassword()).equals(
-                    new String(CHANGE_PROFILE_PASSFIELD_USER.getPassword()))
-                    )){
-                JOptionPane.showMessageDialog(panelLogout, 
-                        "Password and Confirm Password is not equal", 
-                        "Warning", 
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
         
-        SQLCore.setPassword(m_user.getUID(), newPass);
+        return false;
     }
     
     public void playGachaButtonRoll(){
-        if(PLAY_GACHA_BUTTON_ROLL.getText()=="ROLL"){
+        if("ROLL".equals(PLAY_GACHA_BUTTON_ROLL.getText())){
             if(m_user.getGP() < GachaConstants.ROLL_PRICE){
                 JOptionPane.showMessageDialog(rootPane, 
                         "Your current GP is not enough to roll",
@@ -633,9 +647,8 @@ public class UserWindow extends JFrame
         ArrayList<GachaItem> updatedList = SQLCore.getItemsOf(m_user.getUID());
         String list[] = list2array(updatedList);
         
-        itemsList = new JList<String>(list);
+        itemsList = new JList<>(list);
         m_itemOwned = updatedList;
-        
     }
         
     public static String[] list2array(ArrayList<GachaItem> collection){

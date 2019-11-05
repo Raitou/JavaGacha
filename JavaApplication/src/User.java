@@ -15,6 +15,7 @@ public class User {
     private String username;
     private String nickname;
     
+    
     public User(int userID){
         String[] userData = SQLCore.getLogin(userID);
         this.userID = Integer.parseInt(userData[0]);
@@ -51,6 +52,10 @@ public class User {
         currentGP += gamePoints;
         
         SQLCore.setGP(userID, currentGP);
+    }
+    
+    public void refresh(){
+        nickname = SQLCore.getNickname(userID);
     }
     
 }
