@@ -178,7 +178,7 @@ public class AdminWindow extends JFrame
                     tableModel.addRow(items);
                 }
             }
-            ITEM_LIST.setModel(new DefaultTableModel(new Object[] { "Item_ID", "Item_Type", "Item_Name" }, 0));
+            ITEM_LIST.setModel(tableModel);
             itemManagerLayout.add(ITEM_LIST_SCROLL, gbc);
             
             

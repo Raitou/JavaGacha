@@ -64,7 +64,7 @@ public interface AdminComponents {
     public final static JTable ITEM_LIST = new JTable(){
         @Override
         public boolean isCellEditable(int row, int column){
-            return column != 0;
+            return false;
         }
     };
     public final static JScrollPane ITEM_LIST_SCROLL = new JScrollPane(ITEM_LIST);
