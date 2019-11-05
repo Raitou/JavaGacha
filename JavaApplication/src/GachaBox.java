@@ -28,7 +28,6 @@ public class GachaBox implements GachaConstants{
         nItems=SQLCore.getAllItems(NORMAL);
         rItems=SQLCore.getAllItems(RARE);
         srItems=SQLCore.getAllItems(SUPER_RARE);
-        listAll();
     }
     
     public void listAll(){

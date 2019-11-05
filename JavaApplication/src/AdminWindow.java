@@ -52,7 +52,6 @@ public class AdminWindow extends JFrame
         authLevel.put(NORMAL_USER, "Normal User");
         authLevel.put(BANNED_USER, "Banned User");
         
-        System.out.println(authLevel);
         super.setTitle("Admin Window");
         super.setLayout(new GridBagLayout());
         super.setResizable(false);        
