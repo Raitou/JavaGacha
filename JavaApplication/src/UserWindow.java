@@ -20,7 +20,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;

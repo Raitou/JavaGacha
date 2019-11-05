@@ -20,10 +20,10 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
 
 public class AdminWindow extends JFrame 
         implements AdminComponents, ItemListener, ActionListener, KeyListener, AuthLevel{
@@ -41,6 +41,8 @@ public class AdminWindow extends JFrame
     private static Component panelItem;
     private static boolean m_bpanelUserAddHasOperation = false;
     private static boolean m_bpanelUserEditHasOperation = false;
+    private static boolean m_bpanelItemManagerHasOperation = false;
+    private static DefaultTableModel tableModel = null;
     
     public AdminWindow(User user){
         AdminWindow.m_user = user;
@@ -81,8 +83,14 @@ public class AdminWindow extends JFrame
             super.add(panelUserEdit, gbc);
         }
         
-        if((panelLogout = initiateLogout()) != null){
+        if((panelItem = initiateItemManager()) != null){
             gbc.gridx = 0;
+            gbc.gridy = 1;
+            super.add(panelItem, gbc);
+        }
+        
+        if((panelLogout = initiateLogout()) != null){
+            gbc.gridx = 1;
             gbc.gridy = 1;
             super.add(panelLogout, gbc);
         }
@@ -96,6 +104,7 @@ public class AdminWindow extends JFrame
             CREATE_USER_BUTTON_ADD_USER.addActionListener(this);
             BUTTON_CREATE_USER.addActionListener(this);
             BUTTON_EDIT_USER.addActionListener(this);
+            BUTTON_ITEM_MANAGER.addActionListener(this);
             BUTTON_LOGOUT.addActionListener(this);
             EDIT_USER_BUTTON_MINIMIZE.addActionListener(this);
             EDIT_USER_BUTTON_SEARCH_USER.addActionListener(this);
@@ -112,6 +121,7 @@ public class AdminWindow extends JFrame
             BUTTON_CREATE_USER.removeActionListener(this);
             BUTTON_LOGOUT.removeActionListener(this);
             BUTTON_EDIT_USER.removeActionListener(this);
+            BUTTON_ITEM_MANAGER.removeActionListener(this);
             EDIT_USER_BUTTON_MINIMIZE.removeActionListener(this);
             EDIT_USER_BUTTON_SEARCH_USER.removeActionListener(this);
             EDIT_USER_BUTTON_UPDATE_USER.removeActionListener(this);
@@ -131,6 +141,9 @@ public class AdminWindow extends JFrame
         if(panelUserEdit != null){
             super.remove(panelUserEdit);
         }
+        if(panelItem != null){
+            super.remove(panelItem);
+        }
         if(panelLogout != null){
             super.remove(panelLogout);
         }
@@ -143,9 +156,40 @@ public class AdminWindow extends JFrame
         super.pack();
     }
     
+    
+    
+    private Component initiateItemManager(){
+        GridBagConstraints gbc = new GridBagConstraints();
+        JPanel itemManagerLayout = new JPanel(new GridBagLayout());
+        if(!(m_bpanelUserAddHasOperation && m_bpanelUserEditHasOperation) &&
+                (m_bpanelItemManagerHasOperation)){
+            gbc.fill = GridBagConstraints.HORIZONTAL;           
+            
+            gbc.insets = new Insets(10,10,10,10);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            ITEM_LIST.setSize(300, 300);
+            ITEM_LIST.setModel(new DefaultTableModel(new Object[] { "Item_ID", "Item_Type", "Item_Name" }, 0));
+            itemManagerLayout.add(ITEM_LIST_SCROLL, gbc);
+            
+            
+        } else {
+            if(!(m_bpanelUserAddHasOperation ||
+                m_bpanelUserEditHasOperation ||
+                m_bpanelItemManagerHasOperation
+                )){
+               return BUTTON_ITEM_MANAGER;
+            }else {
+                return null;
+            }
+        }
+        return itemManagerLayout;
+    }
+    
     private Component initiateLogout(){
         if(!(m_bpanelUserAddHasOperation ||
-                m_bpanelUserEditHasOperation
+                m_bpanelUserEditHasOperation ||
+                m_bpanelItemManagerHasOperation
                 )){
             return BUTTON_LOGOUT;
         }else {
@@ -156,7 +200,7 @@ public class AdminWindow extends JFrame
     private Component inititateEditUser(){
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel editUserLayout = new JPanel(new GridBagLayout());
-        if(!(m_bpanelUserAddHasOperation) &&
+        if(!(m_bpanelUserAddHasOperation && m_bpanelItemManagerHasOperation) &&
                 (m_bpanelUserEditHasOperation)){
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
@@ -232,7 +276,8 @@ public class AdminWindow extends JFrame
             
         } else {
             if(!(m_bpanelUserAddHasOperation ||
-                m_bpanelUserEditHasOperation
+                m_bpanelUserEditHasOperation ||
+                m_bpanelItemManagerHasOperation
                 )){
                return BUTTON_EDIT_USER;
             }else {
@@ -249,7 +294,7 @@ public class AdminWindow extends JFrame
             Just wanting to have it a body o/
         */
         if(m_bpanelUserAddHasOperation &&
-                !(m_bpanelUserEditHasOperation)){
+                !(m_bpanelUserEditHasOperation && m_bpanelItemManagerHasOperation)){
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
             //bottom, left, right, top
@@ -302,7 +347,8 @@ public class AdminWindow extends JFrame
             userLayout.add(CREATE_USER_BUTTON_ADD_USER, gbc);
         } else {
             if(!(m_bpanelUserAddHasOperation ||
-                m_bpanelUserEditHasOperation
+                m_bpanelUserEditHasOperation ||
+                m_bpanelItemManagerHasOperation
                 )){
                return BUTTON_CREATE_USER;
             }else {
@@ -333,6 +379,7 @@ public class AdminWindow extends JFrame
     private void buttonCreateUser(){
         m_bpanelUserAddHasOperation = true;
         m_bpanelUserEditHasOperation = false;
+        m_bpanelItemManagerHasOperation = false;
         BUTTON_CREATE_USER.removeActionListener(this);
         refreshFrame();
     }
@@ -340,7 +387,16 @@ public class AdminWindow extends JFrame
     private void buttonEditUser(){
         m_bpanelUserAddHasOperation = false;
         m_bpanelUserEditHasOperation = true;
+        m_bpanelItemManagerHasOperation = false;
         BUTTON_EDIT_USER.removeActionListener(this);
+        refreshFrame();
+    }
+    
+    private void buttonItemManager(){
+        m_bpanelUserAddHasOperation = false;
+        m_bpanelUserEditHasOperation = false;
+        m_bpanelItemManagerHasOperation = true;
+        BUTTON_ITEM_MANAGER.removeActionListener(this);
         refreshFrame();
     }
     
@@ -422,6 +478,29 @@ public class AdminWindow extends JFrame
     }
     
     private void editUserButtonUpdateUser(){
+        int checkList = 0;
+        
+        String userInfo = "";
+        if(userInformation[3].equals(Integer.toString(ADMIN_USER)))
+            userInfo = "Administrator";
+        if(userInformation[3].equals(Integer.toString(NORMAL_USER)))
+            userInfo = "Normal User";
+        if(userInformation[3].equals(Integer.toString(BANNED_USER)))
+            userInfo = "Banned User";
+        
+        if(userInformation[0].equals(EDIT_USER_TEXTFIELD_NICK.getText())){
+            checkList++;
+        }
+        if(new String(EDIT_USER_PASSFIELD_USER_CONFIRM.getPassword()).equals("********")){
+            checkList++;
+        }
+        if(userInfo.equals(EDIT_USER_COMBOBOX_ACCESS.getSelectedItem())){
+            checkList++;
+        }
+        if(checkList == 3){
+            return;
+        }
+        
         if(EDIT_USER_TEXTFIELD_NICK.getText().isEmpty()){
             JOptionPane.showMessageDialog(panelUserEdit, "Nickname is Empty", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
@@ -439,13 +518,6 @@ public class AdminWindow extends JFrame
             return;
         }
         
-        String userInfo = "";
-        if(userInformation[3].equals(Integer.toString(ADMIN_USER)))
-            userInfo = "Administrator";
-        if(userInformation[3].equals(Integer.toString(NORMAL_USER)))
-            userInfo = "Normal User";
-        if(userInformation[3].equals(Integer.toString(BANNED_USER)))
-            userInfo = "Banned";
         
         
         if(userInformation[0].equals(EDIT_USER_TEXTFIELD_NICK.getText()) &&
@@ -487,6 +559,10 @@ public class AdminWindow extends JFrame
         }
         if(e.getSource() == BUTTON_EDIT_USER){
             buttonEditUser();
+            return;
+        }
+        if(e.getSource() == BUTTON_ITEM_MANAGER){
+            buttonItemManager();
             return;
         }
         if(e.getSource() == EDIT_USER_BUTTON_MINIMIZE){

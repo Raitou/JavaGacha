@@ -4,7 +4,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -54,5 +57,15 @@ public interface AdminComponents {
     public final JPasswordField EDIT_USER_PASSFIELD_USER = new JPasswordField("", 12);
     public final JPasswordField EDIT_USER_PASSFIELD_USER_CONFIRM = new JPasswordField("", 12);
     
-    
+    /**
+        Item Manager Components
+    */
+    public final static String[] COLUMN_NAMES = {  };
+    public final static JTable ITEM_LIST = new JTable(){
+        @Override
+        public boolean isCellEditable(int row, int column){
+            return column != 0;
+        }
+    };
+    public final static JScrollPane ITEM_LIST_SCROLL = new JScrollPane(ITEM_LIST);
 }

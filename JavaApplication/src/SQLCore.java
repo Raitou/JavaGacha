@@ -256,6 +256,28 @@ public class SQLCore extends SQLDriver implements AuthLevel {
         return null;
     }
     
+    public static String[][] getAllItems(){
+        String statement = "SELECT * FROM ItemInfoList;";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement)){
+            ResultSet res = query.executeQuery();
+            int count = 0;
+            res.last();
+            count = res.getRow();
+            res.beforeFirst();
+            String itemList[][] = new String[count][3];
+            while(res.next()){
+                itemList[res.getRow()-1][0] = res.getString("Item_ID");
+                itemList[res.getRow()-1][1] = res.getString("Item_Type");
+                itemList[res.getRow()-1][2] = res.getString("Item_Name");
+            }
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
+    }
+    
     public static ArrayList<GachaItem> getItemsOf(int UID){
         ArrayList<GachaItem> gachaItems = new ArrayList<>();
         String statement = "SELECT Item_ID, Item_Type, Item_Name, OwnershipID FROM ItemInfoList, ItemOwnership WHERE ItemOwnership.UserID ="
