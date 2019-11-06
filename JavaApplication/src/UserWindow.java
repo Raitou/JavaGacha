@@ -30,10 +30,10 @@ import javax.swing.Timer;
 public class UserWindow extends JFrame 
         implements UserComponents, ItemListener, ActionListener, KeyListener{
     
-    private static boolean IS_CHECKED = false;
-    private static User m_user;
-    private static ArrayList<GachaItem> m_itemOwned;
-    private static Component panelChangeProfile;
+    private static boolean IS_CHECKED = false;          // boolean attribute for the password Visible CheckButton
+    private static User m_user;                         // attribute that contains all user info
+    private static ArrayList<GachaItem> m_itemOwned;    // attribute that contains all the owned item of the user
+    private static Component panelChangeProfile;        
     private static Component panelLogout;
     private static Component panelPlayGacha;
     private static Component panelInventory;
@@ -41,10 +41,10 @@ public class UserWindow extends JFrame
     private static boolean m_bpanelPlayGachaHasOperation = false;
     private static boolean m_bpanelInventoryHasOperation = false;
     
-    private static final GachaBox BOX = new GachaBox();
-    private static JList itemsList;
+    private static final GachaBox BOX = new GachaBox();     //static attribute for the virtual GachaBox
+    private static JList itemsList;                         //static JList for displaying the items
     
-    private final Timer m_timer = new Timer(100,this);
+    private final Timer m_timer = new Timer(100,this);      //used to set the interval of setting the text in rolling the gacha
     
     public UserWindow(User user){
         UserWindow.m_user = user;
@@ -53,7 +53,7 @@ public class UserWindow extends JFrame
         super.setLayout(new GridBagLayout());
         super.setResizable(false);        
         
-        initiateComponents();
+        initializeComponents();
         m_itemOwned = SQLCore.getItemsOf(m_user.getUID());
                 
         super.pack();
@@ -62,7 +62,10 @@ public class UserWindow extends JFrame
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-    private void initiateComponents(){
+    /*
+    initializes the components of the main window
+    */
+    private void initializeComponents(){
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         //bottom, left, right, top
@@ -74,18 +77,18 @@ public class UserWindow extends JFrame
             super.add(panelPlayGacha, gbc);
         }   
                     
-        if((panelInventory = initiateInventory()) != null){
+        if((panelInventory = initializeInventory()) != null){
             gbc.gridx = 1;
             gbc.gridy = 0;
             super.add(panelInventory,gbc);
         }
-        if((panelChangeProfile = initiateChangeProfile()) != null){
+        if((panelChangeProfile = initializeChangeProfile()) != null){
             gbc.gridx = 0;
             gbc.gridy = 1;
-            super.add(panelChangeProfile = initiateChangeProfile(), gbc);
+            super.add(panelChangeProfile = initializeChangeProfile(), gbc);
         }
         
-        if((panelLogout = initiateLogout()) != null){
+        if((panelLogout = initializeLogout()) != null){
             gbc.gridx = 1;
             gbc.gridy = 1;
             super.add(panelLogout, gbc);
@@ -95,6 +98,11 @@ public class UserWindow extends JFrame
         loadListeners(true);
     }
     
+    /*
+    adds all listeners if parameter is true
+    removes all listeners if parameter is false
+    Useful for avoiding redundant Listeners
+    */
     private void loadListeners(boolean c){
         if(c){
             CHANGE_PROFILE_IS_VISIBLE.addItemListener(this);
@@ -133,7 +141,10 @@ public class UserWindow extends JFrame
         }
     }
     
-    
+    /*
+    removes all components
+    useful in refreshing the frame for updates
+    */
     private void removeComponents(){
         if(panelChangeProfile != null){
             super.remove(panelChangeProfile);
@@ -150,13 +161,21 @@ public class UserWindow extends JFrame
         loadListeners(false);
     }
     
+    /*
+    refreshes the whole JFrame
+    useful for when updates take effect
+    */
     private void refreshFrame(){
         removeComponents();
-        initiateComponents();
+        initializeComponents();
         super.pack();
     }
     
-    private Component initiateLogout(){
+    /*
+    returns BUTTON_LOGOUT if all other panels are not in operation
+    returns null else
+    */
+    private Component initializeLogout(){
         if(!(m_bpanelChangeProfileHasOperation ||
                 m_bpanelPlayGachaHasOperation  ||
                 m_bpanelInventoryHasOperation
@@ -167,6 +186,10 @@ public class UserWindow extends JFrame
         }
     }
     
+    /*
+    if PlayGacha is clicked returns a JPanel with full layout
+    else returns the button
+    */
     private Component inititatePlayGacha(){
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel userLayout = new JPanel(new GridBagLayout());
@@ -225,7 +248,11 @@ public class UserWindow extends JFrame
         return userLayout;
     }
     
-    private Component initiateChangeProfile(){
+    /*
+    if ChangeProfile is clicked returns a panel with full layout
+    else returns a button
+    */
+    private Component initializeChangeProfile(){
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel userLayout = new JPanel(new GridBagLayout());
         /** 
@@ -313,7 +340,11 @@ public class UserWindow extends JFrame
         return userLayout;
     }
     
-    public Component initiateInventory(){
+    /*
+    If inventory is clicked return a panel with full layout
+    else return a button
+    */
+    public Component initializeInventory(){
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel userLayout = new JPanel(new GridBagLayout());
         
@@ -358,6 +389,9 @@ public class UserWindow extends JFrame
         return userLayout;
     }
     
+    /*
+    loads the LoginWindow to allow users to go back to Login Window
+    */
     private void loadLoginWindow(){
         LoginWindow w = new LoginWindow();
         
@@ -418,7 +452,7 @@ public class UserWindow extends JFrame
         }
         
         if(e.getSource() == BUTTON_INVENTORY){
-            playGachaButtonShowItems();
+            playGachaButtonInventory();
         }
         
         if(e.getSource() == INVENTORY_BUTTON_SELL){
@@ -434,6 +468,12 @@ public class UserWindow extends JFrame
         } 
     }
     
+    /*
+    procedure for when PlayGacha button is clicked
+    PlayGachaHasOperation is set to true
+    everything else is set false
+    also removes PlayGachaButton actionListener to avoid redundant listeners
+    */
     public void buttonPlayGacha(){
         
         m_bpanelChangeProfileHasOperation = false;
@@ -443,6 +483,12 @@ public class UserWindow extends JFrame
         refreshFrame();
     }
     
+    /*
+    procedure for when ChangeProfile button is clicked
+    ChangeProfileHasOperation is set to true
+    everything else is set false
+    also removes ChangeProfile actionListener to avoid redundant listeners
+    */
     public void buttonChangeProfile(){
         m_bpanelChangeProfileHasOperation = true;
         m_bpanelPlayGachaHasOperation = false;
@@ -451,6 +497,9 @@ public class UserWindow extends JFrame
         refreshFrame();
     }
     
+    /*
+    Procedure for when Changes in the Change Profile is going to be applied
+    */
     public void changeProfileButtonApply(){
             
         if((IS_CHECKED ? !CHANGE_PROFILE_TEXTFIELD_PASS.getText().isEmpty() 
@@ -491,6 +540,9 @@ public class UserWindow extends JFrame
         refreshFrame();
     }
     
+    /*
+    contains the actual code that applies all the changes to the database
+    */
     public boolean changeProfileApply(String nickname, String password){
         boolean modifiedFields = false;
         
@@ -509,6 +561,11 @@ public class UserWindow extends JFrame
         return false;
     }
     
+    /*
+    procedure when roll button is clicked
+    button starts and stops the timer for setting the textfield 
+    to give the appearance of rolling for an item
+    */
     public void playGachaButtonRoll(){
         if("ROLL".equals(PLAY_GACHA_BUTTON_ROLL.getText())){
             if(m_user.getGP() < GachaConstants.ROLL_PRICE){
@@ -550,6 +607,9 @@ public class UserWindow extends JFrame
         }
     }
     
+    /*
+    returns the user to the Main window from the PlayGacha window
+    */
     public void playGachaButtonBack(){
         int c = JOptionPane.showConfirmDialog(rootPane, 
                     "Are you sure you leave?", "Back", 
@@ -565,7 +625,10 @@ public class UserWindow extends JFrame
         }
     }
     
-    public void playGachaButtonShowItems(){
+    /*
+    procedure for when inventory is clicked
+    */
+    public void playGachaButtonInventory(){
         m_bpanelPlayGachaHasOperation = false;
         m_bpanelInventoryHasOperation = true;
         m_bpanelChangeProfileHasOperation = false;
@@ -574,6 +637,9 @@ public class UserWindow extends JFrame
         refreshFrame();
     }
     
+    /*
+    procedure when sell button is clicked
+    */
     public void inventoryButtonSell(){
         if(itemsList.isSelectionEmpty()){
             JOptionPane.showMessageDialog(rootPane, 
@@ -603,6 +669,9 @@ public class UserWindow extends JFrame
         refreshFrame();
     }
     
+    /*
+    takes the user back to the main window from the inventory panel
+    */
     public void inventoryButtonBack(){
         int c = JOptionPane.showConfirmDialog(rootPane, 
                     "Are you sure you leave?", "Back", 
@@ -631,6 +700,10 @@ public class UserWindow extends JFrame
         UserWindow x = new UserWindow(new User(2));
     }
     
+    /*
+    uses the item taken from the BOX.roll() and sets it to the textfield
+    also the item is registered as owned by the user in the database
+    */
     public GachaItem gachaRoll(){
         GachaItem item = BOX.roll();
         PLAY_GACHA_TEXTFIELD_ITEM.setText(item.toString());
@@ -640,12 +713,18 @@ public class UserWindow extends JFrame
         return item;
     }
     
+    /*
+    updates the GP of the user by the parameter
+    */
     public void updateGPby(int gp){
         int currentGP = m_user.getGP();
         currentGP += gp;
         SQLCore.setGP(m_user.getUID(), currentGP);
     }
 
+    /*
+    updates the JList in the inventory panel
+    */
     private void updateItemsList() {
         ArrayList<GachaItem> updatedList = SQLCore.getItemsOf(m_user.getUID());
         String list[] = list2array(updatedList);
@@ -654,6 +733,10 @@ public class UserWindow extends JFrame
         m_itemOwned = updatedList;
     }
         
+    /*
+    static method for converting ArrayLists into an array
+    useful for JLists
+    */
     public static String[] list2array(ArrayList<GachaItem> collection){
         String string[] = new String[collection.size()];
         

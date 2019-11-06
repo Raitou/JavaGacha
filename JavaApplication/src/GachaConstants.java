@@ -9,6 +9,10 @@
  * @author Aevan
  */
 public interface GachaConstants {
+    /*
+    This interface contains all the constants that are relevant to the
+    Gacha Items like rarity and types
+    */
     public final static int NORMAL = 0;
     public final static int RARE = 1;
     public final static int SUPER_RARE = 2;
