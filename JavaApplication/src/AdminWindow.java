@@ -31,6 +31,7 @@ public class AdminWindow extends JFrame
     
     private static LinkedHashMap<Integer, String> authLevel = null; 
     private static String userInformation[] = null;
+    private static String itemList[][] = null;
     private static boolean CREATE_USER_IS_CHECKED = false;
     private static String m_strUser;
     private static int m_intUID;
@@ -158,18 +159,46 @@ public class AdminWindow extends JFrame
     
     
     private Component initiateItemManager(){
-        GridBagConstraints gbc = new GridBagConstraints();
+       GridBagConstraints gbc2 = new GridBagConstraints();
         JPanel itemManagerLayout = new JPanel(new GridBagLayout());
         if(!(m_bpanelUserAddHasOperation && m_bpanelUserEditHasOperation) &&
                 (m_bpanelItemManagerHasOperation)){
+            
+            GridBagConstraints gbc = new GridBagConstraints();
+            JPanel tableItemLayout = new JPanel(new GridBagLayout());
+            JPanel buttonItemLayout = new JPanel(new GridBagLayout());
             gbc.fill = GridBagConstraints.HORIZONTAL;           
             
             gbc.insets = new Insets(10,10,10,10);
             gbc.gridx = 0;
             gbc.gridy = 0;
             ITEM_LIST.setSize(300, 300);
-            ITEM_LIST.setModel(new DefaultTableModel(new Object[] { "Item_ID", "Item_Type", "Item_Name" }, 0));
-            itemManagerLayout.add(ITEM_LIST_SCROLL, gbc);
+            tableModel = new DefaultTableModel();
+            tableModel.addColumn("Item_ID");
+            tableModel.addColumn("Item_Type");
+            tableModel.addColumn("Item_Name");
+            if((itemList = SQLCore.getAllItems()) != null){
+                for (String[] items : itemList) {
+                    tableModel.addRow(items);
+                }
+            }
+            ITEM_LIST.setModel(tableModel);
+            tableItemLayout.add(ITEM_LIST_SCROLL, gbc);
+
+            gbc2.fill = GridBagConstraints.HORIZONTAL;
+
+            itemManagerLayout.add(tableItemLayout);
+            gbc2.gridx = 0;
+            gbc2.gridy = 0;
+            buttonItemLayout.add(BUTTON_ADD_ITEM, gbc2);
+            gbc2.gridx = 0;
+            gbc2.gridy = 1;
+            buttonItemLayout.add(BUTTON_EDIT_ITEM, gbc2);
+            gbc2.gridx = 0;
+            gbc2.gridy = 2;
+            buttonItemLayout.add(BUTTON_SEARCH_ITEM, gbc2);
+            
+            itemManagerLayout.add(buttonItemLayout);
             
             
         } else {
@@ -602,5 +631,9 @@ public class AdminWindow extends JFrame
 
     @Override
     public void keyReleased(KeyEvent e) {}
+    
+    public static void main(String[] args){
+        new AdminWindow(new User(1));
+    }
     
 }

@@ -18,15 +18,22 @@ public class GachaItem implements GachaConstants{
     private String name;
     private int id;
     private int type;
-    private int ownershipID = -1;
+    private int ownershipID = -1;       //ownership is -1 if we dont need to know if item is owned
     
+    /*
+    constructor without determing ownership
+    use ful for listing available items
+    */
     public GachaItem(int id, int type,String name){
         setName(name);
         setType(type);
         setId(id);
         
     }
-    
+    /*
+    constructor that also includes ownership
+    useful when trying to know the items of a user
+    */
     public GachaItem(int id, int type, String name, int ownershipID){
         setName(name);
         setType(type);
@@ -46,6 +53,9 @@ public class GachaItem implements GachaConstants{
         return id;
     }
     
+    /*
+    returns the price of the item based on the item rarity
+    */
     public int getPrice(){
         int price;
         switch(type){
@@ -85,6 +95,10 @@ public class GachaItem implements GachaConstants{
         this.ownershipID=ownershipID;
     }
     
+    /*
+    toString override that returns the name of the item and the
+    associated stars/rarity of the item
+    */
     @Override
     public String toString(){
         String stars = "";

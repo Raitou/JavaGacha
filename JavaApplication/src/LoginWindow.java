@@ -39,6 +39,10 @@ public class LoginWindow extends JFrame
         loadListeners(true);
     }
     
+    /*
+    Adds all needed Listeners if parameter is true
+    Removes all listeners if parameter is false;
+    */
     private void loadListeners(boolean c){
         if(c){
             TEXTFIELD_USER.addKeyListener(this);
@@ -53,9 +57,11 @@ public class LoginWindow extends JFrame
         }
     }
     
-    private void MessageBox(String message, String title, int eventType){
-        JOptionPane.showMessageDialog(rootPane, message, title, eventType);
-    }
+    /*
+    returns true if the account in the parameters exists in the database
+    takes username and password as parameters
+    also instantiates m_user to the user details provided
+    */
     
     private boolean isAccountExists(String user, String pass){
         String userData[] = SQLCore.getLogin(user, pass);
@@ -69,6 +75,12 @@ public class LoginWindow extends JFrame
         }
     }
     
+    /*
+    loads the new window depending on the authentication level
+    AdminWindow if user is admin
+    UserWindow if user is regular
+    LoginWindow is disposed if user is banned
+    */
     public void loadNewWindow(){
         loadListeners(false);
         switch(SQLCore.getUserAuth(m_user.getUID())){
@@ -79,7 +91,10 @@ public class LoginWindow extends JFrame
                 UserWindow userWin = new UserWindow(m_user);
                 break;
             case BANNED_USER:
-                MessageBox("This user account is blocked!", "Warning!", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(rootPane,
+                        "This user account is blocked!",
+                        "Warning!",
+                        JOptionPane.WARNING_MESSAGE);
                 break;
             default:
                 UserWindow userWinDef = new UserWindow(m_user);
@@ -101,15 +116,20 @@ public class LoginWindow extends JFrame
         if(e.getSource() == BUTTON_LOGIN){
             if(isAccountExists(TEXTFIELD_USER.getText(), 
                     String.copyValueOf(PASSFIELD_PASS.getPassword()))){
-                MessageBox("Welcome " + m_user.getNickname() + "!"
-                        , "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(rootPane,
+                        "Welcome " + m_user.getNickname() + "!",
+                        "Information",
+                        JOptionPane.INFORMATION_MESSAGE);
                 TEXTFIELD_USER.setText("");
                 PASSFIELD_PASS.setText("");
                 loadNewWindow();
                 this.dispose();
                 
             } else {
-                MessageBox("User not found!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(rootPane,
+                        "User not found!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }

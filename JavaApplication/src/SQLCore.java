@@ -314,6 +314,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
                 itemList[res.getRow()-1][1] = res.getString("Item_Type");
                 itemList[res.getRow()-1][2] = res.getString("Item_Name");
             }
+            return itemList;
         }catch(SQLException ex){
             System.out.println(ex.getLocalizedMessage());
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
