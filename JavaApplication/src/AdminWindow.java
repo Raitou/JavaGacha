@@ -192,6 +192,17 @@ public class AdminWindow extends JFrame
         }
     }
     
+    private Component initiateItemManagerSearchItem(){
+        if(!(m_bitemPanelEditItemHasOperation ||
+                false ||
+                false
+                )){
+            return BUTTON_SEARCH_ITEM;
+        }else {
+            return null;
+        }
+    }
+    
     private Component initiateItemManagerAddItem(){
         if(!(m_bitemPanelEditItemHasOperation ||
                 false ||
@@ -322,16 +333,25 @@ public class AdminWindow extends JFrame
                     itemLayoutPanel.add(itemPanelEditItem, gbc);
                 }
                 
-                gbc.gridx = 0;
-                gbc.gridy = 2;
-                itemLayoutPanel.add(BUTTON_SEARCH_ITEM, gbc);
-                gbc.gridx = 1;
-                gbc.gridy = 2;
-                itemLayoutPanel.add(BUTTON_DELETE_ITEM, gbc);
-                gbc.gridx = 0;
-                gbc.gridy = 3;
-                gbc.gridwidth = 2;
-                itemLayoutPanel.add(BUTTON_MINIMIZE, gbc);
+                if((itemPanelSearchItem = initiateItemManagerSearchItem()) != null){
+                    gbc.gridx = 0;
+                    gbc.gridy = 2;
+                    itemLayoutPanel.add(BUTTON_SEARCH_ITEM, gbc);
+                }
+                
+                if((itemPanelDeleteItem = inititateItemManagerDeleteItem()) != null){
+                    gbc.gridx = 1;
+                    gbc.gridy = 2;
+                    itemLayoutPanel.add(itemPanelDeleteItem, gbc);
+                }                
+                
+                if((itemPanelMinimize = initiateItemManagerMinimize()) != null){
+                    gbc.gridx = 0;
+                    gbc.gridy = 3;
+                    gbc.gridwidth = 2;
+                    itemLayoutPanel.add(itemPanelMinimize, gbc);
+                }
+                
             }
             
             gbc.insets = new Insets(5,5,5,5);
