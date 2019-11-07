@@ -20,6 +20,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -205,11 +206,12 @@ public class UserWindow extends JFrame
             gbc.gridx = 0;
             gbc.gridy = 0;
             userLayout.add(PLAY_GACHA_LABEL_TITLE,gbc);
-            
-            gbc.gridwidth = 2;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            gbc.ipady = 10;
+            gbc.ipadx = 10;
             gbc.gridheight = 2;
-            gbc.fill = GridBagConstraints.VERTICAL;
+            gbc.gridwidth = 2;
+            gbc.fill = GridBagConstraints.BOTH;
             gbc.gridx = 0;
             gbc.gridy = 1;
             PLAY_GACHA_TEXTFIELD_ITEM.setHorizontalAlignment(SwingConstants.CENTER);
@@ -217,6 +219,10 @@ public class UserWindow extends JFrame
             PLAY_GACHA_TEXTFIELD_ITEM.setEditable(false);
             userLayout.add(PLAY_GACHA_TEXTFIELD_ITEM,gbc);
             
+            gbc.ipady = 0;
+            gbc.ipadx = 0;
+            gbc.weightx = 1;
+            gbc.weighty = 1;
             gbc.gridwidth = 2;
             gbc.gridheight = 1;
             gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -225,12 +231,15 @@ public class UserWindow extends JFrame
             userLayout.add(PLAY_GACHA_BUTTON_ROLL,gbc);
             
             // 2nd column
-            
+            gbc.weightx = 0;
+            gbc.weighty = 0;
+            gbc.gridheight = 1;
+            gbc.gridwidth = 1;
             gbc.gridx = 2;
             gbc.gridy = 1;
             PLAY_GACHA_LABEL_GAMEPOINTS.setText("GP: "+m_user.getGP());
             userLayout.add(PLAY_GACHA_LABEL_GAMEPOINTS,gbc);
-
+            
             gbc.gridx = 2;
             gbc.gridy = 3;
             userLayout.add(PLAY_GACHA_BUTTON_BACK,gbc);
