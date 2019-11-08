@@ -25,6 +25,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
@@ -203,41 +204,24 @@ public class UserWindow extends JFrame
             gbc.gridx = 0;
             gbc.gridy = 0;
             userLayout.add(PLAY_GACHA_LABEL_TITLE,gbc);
-<<<<<<< HEAD
-            
-=======
 
-            gbc.ipady = 10;
-            gbc.ipadx = 10;
->>>>>>> origin/master
             gbc.gridheight = 2;
-<<<<<<< HEAD
+
             gbc.gridwidth = 3;
             gbc.ipadx = 40;
             gbc.ipady = 20;
-=======
-            gbc.gridwidth = 2;
-            gbc.fill = GridBagConstraints.BOTH;
->>>>>>> origin/master
+
             gbc.gridx = 0;
             gbc.gridy = 1;
             PLAY_GACHA_TEXTFIELD_ITEM.setHorizontalAlignment(SwingConstants.CENTER);
             
             PLAY_GACHA_TEXTFIELD_ITEM.setEditable(false);
             userLayout.add(PLAY_GACHA_TEXTFIELD_ITEM,gbc);
-            
-<<<<<<< HEAD
+            ;
             gbc.ipadx = 0;
             gbc.ipady = 0;
             gbc.weighty = 0;
-=======
-            gbc.ipady = 0;
-            gbc.ipadx = 0;
-            gbc.weightx = 1;
-            gbc.weighty = 1;
-            gbc.gridwidth = 2;
-            gbc.gridheight = 1;
->>>>>>> origin/master
+
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.gridwidth = 3;
             gbc.gridheight = 1;
@@ -246,29 +230,19 @@ public class UserWindow extends JFrame
             userLayout.add(PLAY_GACHA_BUTTON_ROLL,gbc);
             
             // 2nd column
-<<<<<<< HEAD
             
             gbc.gridx = 3;
-=======
-            gbc.weightx = 0;
-            gbc.weighty = 0;
-            gbc.gridheight = 1;
-            gbc.gridwidth = 1;
-            gbc.gridx = 2;
->>>>>>> origin/master
+
             gbc.gridy = 1;
             PLAY_GACHA_LABEL_GAMEPOINTS.setText("GP: "+m_user.getGP());
             userLayout.add(PLAY_GACHA_LABEL_GAMEPOINTS,gbc);
             
-<<<<<<< HEAD
             gbc.gridx = 3;
             gbc.gridy = 2;
             userLayout.add(new JLabel(""));
             
             gbc.gridx = 3;
-=======
-            gbc.gridx = 2;
->>>>>>> origin/master
+
             gbc.gridy = 3;
             userLayout.add(PLAY_GACHA_BUTTON_BACK,gbc);
        
@@ -403,6 +377,9 @@ public class UserWindow extends JFrame
             gbc.gridheight = 5;
             updateItemsList();
             INVENTORY_LIST_SCROLL.setColumnHeaderView(userLayout.add(INVENTORY_LABEL_INVENTORY));
+            INVENTORY_LIST_ITEMS.setFixedCellHeight(50);
+            INVENTORY_LIST_ITEMS.setFixedCellWidth(200);
+            INVENTORY_LIST_ITEMS.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             userLayout.add(INVENTORY_LIST_SCROLL, gbc);
             
             gbc.gridheight = 1;

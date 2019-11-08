@@ -52,7 +52,7 @@ public interface AdminComponents {
     public final static JLabel EDIT_USER_LABEL_ACCESS = new JLabel("Access:", JLabel.CENTER);
     public final static JLabel EDIT_USER_LABEL_NICK = new JLabel("Nickname:", JLabel.CENTER);
     public final static JLabel EDIT_USER_LABEL_PASS = new JLabel("Password:", JLabel.CENTER);
-    public final JComboBox EDIT_USER_COMBOBOX_ACCESS = new JComboBox<String>();
+    public final JComboBox EDIT_USER_COMBOBOX_ACCESS = new JComboBox();
     public final JTextField EDIT_USER_TEXTFIELD_NICK = new JTextField("", 12);
     public final JPasswordField EDIT_USER_PASSFIELD_USER = new JPasswordField("", 12);
     public final JPasswordField EDIT_USER_PASSFIELD_USER_CONFIRM = new JPasswordField("", 12);
@@ -60,7 +60,6 @@ public interface AdminComponents {
     /**
         Item Manager Components
     */
-    public final static String[] COLUMN_NAMES = {  };
     public final static JTable ITEM_LIST = new JTable(){
         @Override
         public boolean isCellEditable(int row, int column){

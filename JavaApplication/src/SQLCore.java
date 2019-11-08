@@ -130,7 +130,7 @@ public class SQLCore extends SQLDriver implements AuthLevel {
     public static String[] getLogin(String user, String pass){
         String arr[] = new String[4];
         String statement = "SELECT Nickname, UserID, Login, GamePoints FROM USERS WHERE Login='"
-                + user + "' AND Password='" 
+                + user + "' AND BINARY Password='" 
                 + pass + "';";
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
                 PreparedStatement query = con.prepareStatement(statement);
