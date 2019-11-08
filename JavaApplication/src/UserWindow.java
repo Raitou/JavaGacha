@@ -21,7 +21,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import javax.swing.JFrame;
-import javax.swing.JList;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -42,7 +42,6 @@ public class UserWindow extends JFrame
     private static boolean m_bpanelInventoryHasOperation = false;
     
     private static final GachaBox BOX = new GachaBox();     //static attribute for the virtual GachaBox
-    private static JList itemsList;                         //static JList for displaying the items
     
     private final Timer m_timer = new Timer(100,this);      //used to set the interval of setting the text in rolling the gacha
     
@@ -71,7 +70,7 @@ public class UserWindow extends JFrame
         //bottom, left, right, top
         gbc.insets = new Insets(10 , 10, 10, 10);
         
-        if((panelPlayGacha = inititatePlayGacha()) != null){
+        if((panelPlayGacha = initializePlayGacha()) != null){
             gbc.gridx = 0;
             gbc.gridy = 0;
             super.add(panelPlayGacha, gbc);
@@ -93,8 +92,6 @@ public class UserWindow extends JFrame
             gbc.gridy = 1;
             super.add(panelLogout, gbc);
         }
-        
-        
         loadListeners(true);
     }
     
@@ -190,7 +187,7 @@ public class UserWindow extends JFrame
     if PlayGacha is clicked returns a JPanel with full layout
     else returns the button
     */
-    private Component inititatePlayGacha(){
+    private Component initializePlayGacha(){
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel userLayout = new JPanel(new GridBagLayout());
         if(!(m_bpanelChangeProfileHasOperation) &&
@@ -206,10 +203,10 @@ public class UserWindow extends JFrame
             gbc.gridy = 0;
             userLayout.add(PLAY_GACHA_LABEL_TITLE,gbc);
             
-            gbc.gridwidth = 2;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.gridheight = 2;
-            gbc.fill = GridBagConstraints.VERTICAL;
+            gbc.gridwidth = 3;
+            gbc.ipadx = 40;
+            gbc.ipady = 20;
             gbc.gridx = 0;
             gbc.gridy = 1;
             PLAY_GACHA_TEXTFIELD_ITEM.setHorizontalAlignment(SwingConstants.CENTER);
@@ -217,21 +214,28 @@ public class UserWindow extends JFrame
             PLAY_GACHA_TEXTFIELD_ITEM.setEditable(false);
             userLayout.add(PLAY_GACHA_TEXTFIELD_ITEM,gbc);
             
-            gbc.gridwidth = 2;
-            gbc.gridheight = 1;
+            gbc.ipadx = 0;
+            gbc.ipady = 0;
+            gbc.weighty = 0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridwidth = 3;
+            gbc.gridheight = 1;
             gbc.gridx = 0;
             gbc.gridy = 3;
             userLayout.add(PLAY_GACHA_BUTTON_ROLL,gbc);
             
             // 2nd column
             
-            gbc.gridx = 2;
+            gbc.gridx = 3;
             gbc.gridy = 1;
             PLAY_GACHA_LABEL_GAMEPOINTS.setText("GP: "+m_user.getGP());
             userLayout.add(PLAY_GACHA_LABEL_GAMEPOINTS,gbc);
-
-            gbc.gridx = 2;
+            
+            gbc.gridx = 3;
+            gbc.gridy = 2;
+            userLayout.add(new JLabel(""));
+            
+            gbc.gridx = 3;
             gbc.gridy = 3;
             userLayout.add(PLAY_GACHA_BUTTON_BACK,gbc);
        
@@ -355,9 +359,6 @@ public class UserWindow extends JFrame
             
             gbc.insets = new Insets(5,5,5,5);
             gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            userLayout.add(INVENTORY_LABEL_INVENTORY,gbc);
             
             gbc.gridx = 1;
             gbc.gridy = 0;
@@ -365,10 +366,13 @@ public class UserWindow extends JFrame
             userLayout.add(PLAY_GACHA_LABEL_GAMEPOINTS,gbc);
             
             gbc.gridx = 0;
-            gbc.gridy = 1;
+            gbc.gridy = 0;
+            gbc.gridheight = 5;
             updateItemsList();
-            userLayout.add(itemsList,gbc);
+            INVENTORY_LIST_SCROLL.setColumnHeaderView(userLayout.add(INVENTORY_LABEL_INVENTORY));
+            userLayout.add(INVENTORY_LIST_SCROLL, gbc);
             
+            gbc.gridheight = 1;
             gbc.gridx = 1;
             gbc.gridy = 1;
             userLayout.add(INVENTORY_BUTTON_SELL,gbc);
@@ -452,7 +456,7 @@ public class UserWindow extends JFrame
         }
         
         if(e.getSource() == BUTTON_INVENTORY){
-            playGachaButtonInventory();
+            buttonInventory();
         }
         
         if(e.getSource() == INVENTORY_BUTTON_SELL){
@@ -532,7 +536,7 @@ public class UserWindow extends JFrame
                 JOptionPane.ERROR_MESSAGE);
         }
         
-        
+        m_user.refresh();
         m_bpanelChangeProfileHasOperation = false;
         m_bpanelPlayGachaHasOperation = false;
         m_bpanelInventoryHasOperation = false;
@@ -546,19 +550,17 @@ public class UserWindow extends JFrame
     public boolean changeProfileApply(String nickname, String password){
         boolean modifiedFields = false;
         
-        if(!nickname.equals(m_user.getNickname()))
-            modifiedFields = true;
-        if(!password.equals("********"))
-            modifiedFields = true;
-        
-        if(modifiedFields){
+        if(!nickname.equals(m_user.getNickname())){
             SQLCore.setNickname(m_user.getUID(),nickname);
-            SQLCore.setPassword(m_user.getUID(),password);
-            m_user.refresh();
-            return true;
+            modifiedFields = true;
         }
-        
-        return false;
+       
+        if(!password.equals("********")){
+            SQLCore.setPassword(m_user.getUID(),password);
+            modifiedFields = true;
+        }
+            
+        return modifiedFields;
     }
     
     /*
@@ -597,6 +599,8 @@ public class UserWindow extends JFrame
         else{
             GachaItem rolled = gachaRoll();
             m_timer.stop();
+            m_itemOwned.add(rolled);
+            SQLCore.itemOwn(m_user.getUID(), rolled);
             PLAY_GACHA_BUTTON_ROLL.setText("ROLL");
             PLAY_GACHA_BUTTON_BACK.setEnabled(true);
             BUTTON_INVENTORY.setEnabled(true);
@@ -628,7 +632,7 @@ public class UserWindow extends JFrame
     /*
     procedure for when inventory is clicked
     */
-    public void playGachaButtonInventory(){
+    public void buttonInventory(){
         m_bpanelPlayGachaHasOperation = false;
         m_bpanelInventoryHasOperation = true;
         m_bpanelChangeProfileHasOperation = false;
@@ -641,14 +645,14 @@ public class UserWindow extends JFrame
     procedure when sell button is clicked
     */
     public void inventoryButtonSell(){
-        if(itemsList.isSelectionEmpty()){
+        if(INVENTORY_LIST_ITEMS.isSelectionEmpty()){
             JOptionPane.showMessageDialog(rootPane, 
                     "Please select an item to sell",
                     "Nothing is selected",
                     JOptionPane.ERROR_MESSAGE);
         }
         else{
-            GachaItem selectedItem = m_itemOwned.get(itemsList.getSelectedIndex());
+            GachaItem selectedItem = m_itemOwned.get(INVENTORY_LIST_ITEMS.getSelectedIndex());
             int c = JOptionPane.showConfirmDialog(rootPane, 
                     "Sell for "+selectedItem.getPrice()+"GP?",
                     "Sell Item?",
@@ -662,10 +666,10 @@ public class UserWindow extends JFrame
                         "You received "+selectedItem.getPrice()+"GP",
                         "Transaction Complete",
                         JOptionPane.INFORMATION_MESSAGE);
+                m_itemOwned.remove(selectedItem);
             }
         }
         
-        m_itemOwned = SQLCore.getItemsOf(m_user.getUID());
         refreshFrame();
     }
     
@@ -726,11 +730,10 @@ public class UserWindow extends JFrame
     updates the JList in the inventory panel
     */
     private void updateItemsList() {
-        ArrayList<GachaItem> updatedList = SQLCore.getItemsOf(m_user.getUID());
-        String list[] = list2array(updatedList);
+        String list[] = list2array(m_itemOwned);
         
-        itemsList = new JList<>(list);
-        m_itemOwned = updatedList;
+        INVENTORY_LIST_ITEMS.setListData(list);
+        
     }
         
     /*

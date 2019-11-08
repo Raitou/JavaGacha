@@ -2,7 +2,9 @@
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.Timer;
@@ -55,5 +57,6 @@ public interface UserComponents {
     public final static JLabel INVENTORY_LABEL_INVENTORY=new JLabel("INVENTORY",JLabel.CENTER);
     public final static JButton INVENTORY_BUTTON_SELL = new JButton("SELL");
     public final static JButton INVENTORY_BUTTON_BACK = new JButton("BACK");
-    
+    public static final JList<String> INVENTORY_LIST_ITEMS = new JList<>();
+    public static final JScrollPane INVENTORY_LIST_SCROLL = new JScrollPane(INVENTORY_LIST_ITEMS);
 }
