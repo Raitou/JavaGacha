@@ -19,6 +19,49 @@ import javax.swing.JOptionPane;
  */
 public class SQLCore extends SQLDriver implements AuthLevel {
     
+    public static boolean addItemData(String itemName, int itemRarity){
+        String statement = "SELECT * FROM ItemInfoList WHERE Item_Name='" + itemName + "';";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            ResultSet res = query.executeQuery();
+            if(res.next()){
+                return false;
+            }
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+        }
+        
+        statement = "INSERT INTO ItemInfoList(Item_Type, Item_Name) "
+                + "VALUES(" + itemRarity + ",'" + itemName + "');";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+    
+    
+    public static boolean updateItemData(int itemID, String itemName, int itemRarity){
+        String statement = "UPDATE ItemInfoList SET Item_Name ='" + itemName + 
+                "', Item_Type = " + itemRarity + " WHERE Item_ID =" + itemID + ";";
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            query.executeUpdate();
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * Method that adds data in the MySQL Database
      * 
@@ -320,6 +363,26 @@ public class SQLCore extends SQLDriver implements AuthLevel {
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return null;
+    }
+    
+    public static String[] getItemInformation(int itemID){
+        String statement = "SELECT * FROM ItemInfoList WHERE Item_ID = " + itemID;
+        try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);
+                PreparedStatement query = con.prepareStatement(statement);
+                ){
+            ResultSet res = query.executeQuery();
+            while(res.next()){
+                String itemInfo[] = new String[3];
+                itemInfo[0] = res.getString("Item_ID");
+                itemInfo[1] = res.getString("Item_Type");
+                itemInfo[2] = res.getString("Item_Name");
+                return itemInfo;
+            }
+        }catch(SQLException ex){
+            System.out.println(ex.getLocalizedMessage());
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;       
     }
     
     /*

@@ -1,6 +1,7 @@
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPasswordField;
@@ -24,6 +25,7 @@ public interface UserComponents {
     public final static JButton BUTTON_CHANGE_PROFILE = new JButton("Change Profile");
     public final static JButton BUTTON_PLAY_GACHA = new JButton("Play Gacha");
     public final static JButton BUTTON_INVENTORY = new JButton("Inventory");
+    public final static JButton BUTTON_SETTINGS = new JButton("Settings");
     
     
     /**
@@ -45,18 +47,29 @@ public interface UserComponents {
         Play Gacha Components
     */
     
-    public final static JLabel PLAY_GACHA_LABEL_TITLE=new JLabel("GACHAPON",JLabel.CENTER);
+    public final static JLabel PLAY_GACHA_LABEL_TITLE = new JLabel("Gachapon",JLabel.CENTER);
     public final static JLabel PLAY_GACHA_LABEL_GAMEPOINTS = new JLabel("GP: ",JLabel.CENTER);
-    public final static JButton PLAY_GACHA_BUTTON_ROLL=new JButton("ROLL");
-    public final static JButton PLAY_GACHA_BUTTON_BACK=new JButton("BACK");
-    public final JTextField PLAY_GACHA_TEXTFIELD_ITEM=new JTextField("",10);
+    public final static JButton PLAY_GACHA_BUTTON_ROLL = new JButton("ROLL");
+    public final static JButton PLAY_GACHA_BUTTON_BACK = new JButton("BACK");
+    public final JTextField PLAY_GACHA_TEXTFIELD_ITEM = new JTextField("",10);
     
     /*
         Show Items Components
     */
-    public final static JLabel INVENTORY_LABEL_INVENTORY=new JLabel("INVENTORY",JLabel.CENTER);
+    public final static JLabel INVENTORY_LABEL_INVENTORY = new JLabel("Inventory",JLabel.CENTER);
     public final static JButton INVENTORY_BUTTON_SELL = new JButton("SELL");
     public final static JButton INVENTORY_BUTTON_BACK = new JButton("BACK");
     public static final JList<String> INVENTORY_LIST_ITEMS = new JList<>();
     public static final JScrollPane INVENTORY_LIST_SCROLL = new JScrollPane(INVENTORY_LIST_ITEMS);
+    
+    /*
+        Settings Components
+    */
+    public final static JLabel SETTINGS_LABEL_SETTINGS = new JLabel("Settings", JLabel.CENTER);
+    public final static JComboBox SETTINGS_CB_COLOR = new JComboBox();
+    public final static JComboBox SETTINGS_CB_FONT = new JComboBox();
+    public final static JButton SETTINGS_BUTTON_BACK = new JButton("Back");
+    public final static JButton SETTINGS_BUTTON_APPLY = new JButton("Apply");
+    
+    
 }

@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
 public class AdminWindow extends JFrame 
-        implements AdminComponents, ItemListener, ActionListener, KeyListener, AuthLevel{
+        implements AdminComponents, ItemListener, ActionListener, KeyListener, AuthLevel, GachaConstants{
     
     
     private static LinkedHashMap<Integer, String> authLevel = null; 
@@ -36,6 +36,9 @@ public class AdminWindow extends JFrame
     private static String m_strUser;
     private static int m_intUID;
     private static User m_user;
+    private static int m_intItemID;
+    private static String m_strItemName;
+    private static int m_intItemRarity;
     
     private static Component panelUserAdd;
     private static Component panelLogout;
@@ -47,13 +50,13 @@ public class AdminWindow extends JFrame
     private static boolean m_bpanelItemManagerHasOperation = false;
     
     private static Component itemPanelEditItem;
-    private static Component itemPanelShowAllItems;
+    private static Component itemPanelRefresh;
     private static Component itemPanelAddItem;
     private static Component itemPanelSearchItem;
-    private static Component itemPanelDeleteItem;
     private static Component itemPanelMinimize;
     
-    private static boolean m_bitemPanelEditItemHasOperation = false;
+    private static boolean m_bItemPanelEditItemHasOperation = false;
+    private static boolean m_bItemPanelAddItemHasOperation = false;
     
     private static DefaultTableModel tableModel = null;
     
@@ -122,6 +125,12 @@ public class AdminWindow extends JFrame
             EDIT_USER_BUTTON_SEARCH_USER.addActionListener(this);
             EDIT_USER_BUTTON_UPDATE_USER.addActionListener(this);
             BUTTON_EDIT_ITEM.addActionListener(this);
+            EDIT_ITEM_BUTTON_APPLY_CHANGES.addActionListener(this);
+            BUTTON_ADD_ITEM.addActionListener(this);
+            ADD_ITEM_BUTTON_ADD_ITEM.addActionListener(this);
+            BUTTON_SEARCH_ITEM.addActionListener(this);
+            BUTTON_REFRESH.addActionListener(this);
+            BUTTON_MINIMIZE.addActionListener(this);
             if(!CREATE_USER_IS_CHECKED){
                 CREATE_USER_PASSFIELD_USER.addKeyListener(this);
                 CREATE_USER_PASSFIELD_USER_CONFIRM.addKeyListener(this);
@@ -139,6 +148,12 @@ public class AdminWindow extends JFrame
             EDIT_USER_BUTTON_SEARCH_USER.removeActionListener(this);
             EDIT_USER_BUTTON_UPDATE_USER.removeActionListener(this);
             BUTTON_EDIT_ITEM.removeActionListener(this);
+            EDIT_ITEM_BUTTON_APPLY_CHANGES.removeActionListener(this);
+            BUTTON_ADD_ITEM.removeActionListener(this);
+            ADD_ITEM_BUTTON_ADD_ITEM.removeActionListener(this);
+            BUTTON_SEARCH_ITEM.removeActionListener(this);
+            BUTTON_REFRESH.removeActionListener(this);
+            BUTTON_MINIMIZE.removeActionListener(this);
             if(!CREATE_USER_IS_CHECKED){
                 CREATE_USER_PASSFIELD_USER.removeKeyListener(this);
                 CREATE_USER_PASSFIELD_USER_CONFIRM.removeKeyListener(this);
@@ -164,14 +179,11 @@ public class AdminWindow extends JFrame
         if(itemPanelEditItem != null){
             super.remove(itemPanelEditItem);
         }
-        if(itemPanelShowAllItems != null){
-            super.remove(itemPanelShowAllItems);
+        if(itemPanelRefresh != null){
+            super.remove(itemPanelRefresh);
         }
         if(itemPanelSearchItem != null){
             super.remove(itemPanelSearchItem);
-        }
-        if(itemPanelDeleteItem != null){
-            super.remove(itemPanelDeleteItem);
         }
         if(itemPanelMinimize != null){
             super.remove(itemPanelMinimize);
@@ -190,8 +202,8 @@ public class AdminWindow extends JFrame
     }
     
     private Component initiateItemManagerMinimize(){
-        if(!(m_bitemPanelEditItemHasOperation ||
-                false ||
+        if(!(m_bItemPanelEditItemHasOperation ||
+                m_bItemPanelAddItemHasOperation ||
                 false
                 )){
             return BUTTON_MINIMIZE;
@@ -200,21 +212,9 @@ public class AdminWindow extends JFrame
         }
     }
     
-    
-    private Component inititateItemManagerDeleteItem(){
-        if(!(m_bitemPanelEditItemHasOperation ||
-                false ||
-                false
-                )){
-            return BUTTON_DELETE_ITEM;
-        }else {
-            return null;
-        }
-    }
-    
     private Component initiateItemManagerSearchItem(){
-        if(!(m_bitemPanelEditItemHasOperation ||
-                false ||
+        if(!(m_bItemPanelEditItemHasOperation ||
+                m_bItemPanelAddItemHasOperation ||
                 false
                 )){
             return BUTTON_SEARCH_ITEM;
@@ -224,22 +224,66 @@ public class AdminWindow extends JFrame
     }
     
     private Component initiateItemManagerAddItem(){
-        if(!(m_bitemPanelEditItemHasOperation ||
+        GridBagConstraints gbc = new GridBagConstraints();
+        JPanel itemManagerAddItemLayout = new JPanel(new GridBagLayout());
+        /** 
+            Just wanting to have it a body o/
+        */
+        if(!(m_bItemPanelEditItemHasOperation) &&
+                (m_bItemPanelAddItemHasOperation)){
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            //bottom, left, right, top
+            gbc.insets = new Insets(5,0,0,0);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            itemManagerAddItemLayout.add(LABEL_ADD_ITEM, gbc);
+
+            
+            gbc.gridx = 0;  
+            gbc.gridy = 1;  
+            itemManagerAddItemLayout.add(LABEL_ADD_ITEM_RARITY, gbc);
+
+
+            gbc.ipady = 0;
+            gbc.gridx = 1;  
+            gbc.gridy = 1;  
+            itemManagerAddItemLayout.add(COMBOXBOX_ITEM_RARITY, gbc);
+
+            gbc.ipady = 5;
+            gbc.gridx = 0;  
+            gbc.gridy = 2;
+            itemManagerAddItemLayout.add(LABEL_ADD_ITEM_NAME, gbc);
+
+            gbc.ipady = 0;
+            gbc.gridx = 1;  
+            gbc.gridy = 2;  
+            itemManagerAddItemLayout.add(TEXTFIELD_ITEM_NAME, gbc);
+            
+            gbc.ipady = 0;
+            gbc.gridwidth = 2;
+            gbc.gridx = 0;
+            gbc.gridy = 3;
+            itemManagerAddItemLayout.add(ADD_ITEM_BUTTON_ADD_ITEM, gbc);
+        } else {
+            if(!(m_bItemPanelEditItemHasOperation ||
                 false ||
                 false
                 )){
-            return BUTTON_ADD_ITEM;
-        }else {
-            return null;
+               return BUTTON_ADD_ITEM;
+            }else {
+                return null;
+            }
         }
+        return itemManagerAddItemLayout;
     }
     
-    private Component initiateItemManagerShowAllItems(){
-        if(!(m_bitemPanelEditItemHasOperation ||
-                false ||
+    private Component initiateItemManagerRefresh(){
+        if(!(m_bItemPanelEditItemHasOperation ||
+                m_bItemPanelAddItemHasOperation ||
                 false
                 )){
-            return BUTTON_SHOW_ALL_ITEM;
+            return BUTTON_REFRESH;
         }else {
             return null;
         }
@@ -251,43 +295,45 @@ public class AdminWindow extends JFrame
         /** 
             Just wanting to have it a body o/
         */
-        if(m_bitemPanelEditItemHasOperation){
+        if(!(m_bItemPanelAddItemHasOperation) &&
+                (m_bItemPanelEditItemHasOperation)){
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
             //bottom, left, right, top
             gbc.insets = new Insets(5,0,0,0);
             gbc.gridx = 0;
             gbc.gridy = 0;
-            itemManagerEditItemLayout.add(LABEL_EDIT_ITEM, gbc);
+            itemManagerEditItemLayout.add(EDIT_ITEM_LABEL_EDIT_ITEM, gbc);
 
             
             gbc.gridx = 0;  
             gbc.gridy = 1;  
-            itemManagerEditItemLayout.add(LABEL_EDIT_ITEM_RARITY, gbc);
+            itemManagerEditItemLayout.add(EDIT_ITEM_LABEL_EDIT_ITEM_RARITY, gbc);
+
 
             gbc.ipady = 0;
             gbc.gridx = 1;  
             gbc.gridy = 1;  
-            itemManagerEditItemLayout.add(COMBOBOX_ITEM_RARITY, gbc);
+            itemManagerEditItemLayout.add(EDIT_ITEM_COMBOBOX_ITEM_RARITY, gbc);
 
             gbc.ipady = 5;
             gbc.gridx = 0;  
             gbc.gridy = 2;
-            itemManagerEditItemLayout.add(LABEL_EDIT_ITEM_NAME, gbc);
+            itemManagerEditItemLayout.add(EDIT_ITEM_LABEL_EDIT_ITEM_NAME, gbc);
 
             gbc.ipady = 0;
             gbc.gridx = 1;  
             gbc.gridy = 2;  
-            itemManagerEditItemLayout.add(TEXTFIELD_ITEM_NAME, gbc);
+            itemManagerEditItemLayout.add(EDIT_ITEM_TEXTFIELD_ITEM_NAME, gbc);
             
             gbc.ipady = 0;
             gbc.gridwidth = 2;
             gbc.gridx = 0;
             gbc.gridy = 3;
-            itemManagerEditItemLayout.add(BUTTON_APPLY_CHANGES, gbc);
+            itemManagerEditItemLayout.add(EDIT_ITEM_BUTTON_APPLY_CHANGES, gbc);
         } else {
-            if(!(m_bitemPanelEditItemHasOperation ||
-                false ||
+            if(!(m_bItemPanelEditItemHasOperation ||
+                m_bItemPanelAddItemHasOperation ||
                 false
                 )){
                return BUTTON_EDIT_ITEM;
@@ -317,6 +363,17 @@ public class AdminWindow extends JFrame
             tableModel.addColumn("Item_Name");
             if((itemList = SQLCore.getAllItems()) != null){
                 for (String[] items : itemList) {
+                    if(items[1].equals("0")){
+                        items[1] = "NORMAL";
+                    }
+                    else if(items[1].equals("1")){
+                        items[1] = "RARE";
+                    }
+                    else if(items[1].equals("2")){
+                        items[1] = "SUPER RARE";
+                    } else {
+                        items[1] = "INVALID";
+                    }
                     tableModel.addRow(items);
                 }
             }
@@ -332,11 +389,11 @@ public class AdminWindow extends JFrame
             if(true){
                 gbc.fill = GridBagConstraints.HORIZONTAL;
                 
-                if((itemPanelShowAllItems = initiateItemManagerShowAllItems()) != null){
+                if((itemPanelRefresh = initiateItemManagerRefresh()) != null){
                     gbc.gridx = 0;
                     gbc.gridy = 0;
                     gbc.gridwidth = 2;
-                    itemLayoutPanel.add(itemPanelShowAllItems, gbc);
+                    itemLayoutPanel.add(itemPanelRefresh, gbc);
                 }
                 
                 if((itemPanelAddItem = initiateItemManagerAddItem()) != null){
@@ -355,14 +412,9 @@ public class AdminWindow extends JFrame
                 if((itemPanelSearchItem = initiateItemManagerSearchItem()) != null){
                     gbc.gridx = 0;
                     gbc.gridy = 2;
+                    gbc.gridwidth = 2;
                     itemLayoutPanel.add(itemPanelSearchItem, gbc);
-                }
-                
-                if((itemPanelDeleteItem = inititateItemManagerDeleteItem()) != null){
-                    gbc.gridx = 1;
-                    gbc.gridy = 2;
-                    itemLayoutPanel.add(itemPanelDeleteItem, gbc);
-                }                
+                }          
                 
                 if((itemPanelMinimize = initiateItemManagerMinimize()) != null){
                     gbc.gridx = 0;
@@ -607,21 +659,119 @@ public class AdminWindow extends JFrame
         refreshFrame();
     }
     
+    private void itemManagerButtonAddItem(){
+        m_bItemPanelEditItemHasOperation = false;
+        m_bItemPanelAddItemHasOperation = true;
+        BUTTON_ADD_ITEM.removeActionListener(this);
+        refreshFrame();
+    }
+    
+    private void itemManagerButtonSearchItem(){
+        String strItemID = JOptionPane.showInputDialog(panelItem, "Please Enter the ITEM_ID you want to search: ", "Search Item", JOptionPane.QUESTION_MESSAGE);
+        int itemID;
+        try{
+            itemID = Integer.parseInt(strItemID);
+        }catch(NumberFormatException ex){
+            System.out.println(ex.getLocalizedMessage());
+            return;
+        }
+        String itemInfo[];
+        if((itemInfo = SQLCore.getItemInformation(itemID)) == null){
+            System.out.println("Item not found");
+            return;
+        }
+        JOptionPane.showMessageDialog(panelItem, 
+                "ItemID:   " + itemInfo[0] + "\n" +
+                "ItemType: " + ("0".equals(itemInfo[1]) ? "Normal" : "1".equals(itemInfo[1]) ? "Rare" : "Super Rare") + "\n" +
+                "ItemName: " + itemInfo[2],
+                "Information",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+    
+    private void itemManagerButtonDeleteItem(){
+        m_intItemID = 0;
+        int row[] = ITEM_LIST.getSelectedRows();
+        if(tableModel == null){
+                return;
+        }
+        for(Integer i : row){
+            m_intItemID = Integer.parseInt(ITEM_LIST.getValueAt(i, 0).toString());
+        }
+    
+    }
+    
     private void itemManagerButtonEditItem(){
+        m_intItemID = 0;
         int row[] = ITEM_LIST.getSelectedRows();
         for(Integer i : row){
-            System.out.println(ITEM_LIST.getValueAt(i, 0));
-            System.out.println(ITEM_LIST.getValueAt(i, 1));
-            System.out.println(ITEM_LIST.getValueAt(i, 2));
+            m_intItemID = Integer.parseInt(ITEM_LIST.getValueAt(i, 0).toString());
+            System.out.println(m_intItemID);
+            m_intItemRarity = "NORMAL".equals(ITEM_LIST.getValueAt(i, 1).toString()) ? 0 : 
+                    "RARE".equals(ITEM_LIST.getValueAt(i, 1).toString()) ? 1 : 2;
+            EDIT_ITEM_COMBOBOX_ITEM_RARITY.setSelectedIndex(m_intItemRarity);
+            m_strItemName = ITEM_LIST.getValueAt(i, 2).toString();
+            EDIT_ITEM_TEXTFIELD_ITEM_NAME.setText(m_strItemName);
         }
-        m_bitemPanelEditItemHasOperation = true;
+        if(m_intItemID == 0){
+            return;
+        }
+        m_bItemPanelEditItemHasOperation = true;
+        m_bItemPanelAddItemHasOperation = false;
+        BUTTON_EDIT_ITEM.removeActionListener(this);
+        refreshFrame();
+    }
+    
+    private void itemManagerAddItemButtonApplyMinimizeItem(){
+        if(TEXTFIELD_ITEM_NAME.getText().isEmpty()){
+            m_bItemPanelEditItemHasOperation = false;
+            m_bItemPanelAddItemHasOperation = false;
+            ADD_ITEM_BUTTON_ADD_ITEM.removeActionListener(this);
+            refreshFrame();
+            return;
+        }
+        if(SQLCore.addItemData(TEXTFIELD_ITEM_NAME.getText(), COMBOXBOX_ITEM_RARITY.getSelectedIndex())){
+            System.out.println("Item succesfully added");
+        } else {
+            System.out.println("Failed added item");
+        }
+        m_bItemPanelEditItemHasOperation = false;
+        m_bItemPanelAddItemHasOperation = false;
+        ADD_ITEM_BUTTON_ADD_ITEM.removeActionListener(this);
         refreshFrame();
         
+    }
+    
+    private void itemManagerEditItemButtonApplyMinimizeItem(){
+        int checkList = 0;
+        if(EDIT_ITEM_COMBOBOX_ITEM_RARITY.getSelectedIndex() == m_intItemRarity){
+            System.out.println("itemRarity+");
+            checkList++;
+        }
+        if(EDIT_ITEM_TEXTFIELD_ITEM_NAME.getText().equals(m_strItemName)){
+            System.out.println("itemName+");
+            checkList++;
+        }
+        if(checkList == 2){
+            m_bItemPanelEditItemHasOperation = false;
+            m_bItemPanelAddItemHasOperation = false;
+            EDIT_ITEM_BUTTON_APPLY_CHANGES.removeActionListener(this);
+            refreshFrame();
+            return;
+        }
+        if(SQLCore.updateItemData(m_intItemID, EDIT_ITEM_TEXTFIELD_ITEM_NAME.getText(), EDIT_ITEM_COMBOBOX_ITEM_RARITY.getSelectedIndex())){
+            System.out.println("Data Succesfully Added");
+            m_bItemPanelEditItemHasOperation = false;
+            m_bItemPanelAddItemHasOperation = false;
+        }
+        EDIT_ITEM_BUTTON_APPLY_CHANGES.removeActionListener(this);
+        refreshFrame();
     }
     
     private void editUserButtonMinimize(){
         m_bpanelUserAddHasOperation = false;
         m_bpanelUserEditHasOperation = false;
+        m_bpanelItemManagerHasOperation = false;
         EDIT_USER_BUTTON_MINIMIZE.removeActionListener(this);
         EDIT_USER_BUTTON_UPDATE_USER.setEnabled(false);
         refreshFrame();
@@ -671,6 +821,7 @@ public class AdminWindow extends JFrame
         CREATE_USER_TEXTFIELD_PASS.setText("");
         m_bpanelUserAddHasOperation = false;
         m_bpanelUserEditHasOperation = false;
+        m_bpanelItemManagerHasOperation = false;
         CREATE_USER_BUTTON_ADD_USER.removeActionListener(this);
         refreshFrame();
     }
@@ -772,13 +923,6 @@ public class AdminWindow extends JFrame
         editUserButtonMinimize();       
     }
     
-    private void buttonEditItem(){
-        
-        
-        
-        //ITEM_LIST.getValueAt(ERROR, NORMAL);
-    }
-    
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == BUTTON_CREATE_USER){
@@ -809,9 +953,39 @@ public class AdminWindow extends JFrame
             editUserButtonUpdateUser();
             return;
         }
+        if(e.getSource() == EDIT_ITEM_BUTTON_APPLY_CHANGES){
+            itemManagerEditItemButtonApplyMinimizeItem();
+            return;
+        }
         if(e.getSource() == BUTTON_EDIT_ITEM){
-            
             itemManagerButtonEditItem();
+            return;
+        }
+        if(e.getSource() == BUTTON_ADD_ITEM){
+            itemManagerButtonAddItem();
+            return;
+        }
+        if(e.getSource() == ADD_ITEM_BUTTON_ADD_ITEM){
+            itemManagerAddItemButtonApplyMinimizeItem();
+            return;
+        }
+        if(e.getSource() == BUTTON_SEARCH_ITEM){
+            itemManagerButtonSearchItem();
+            return;
+        }
+        if(e.getSource() == BUTTON_REFRESH){
+            m_bItemPanelEditItemHasOperation = false;
+            m_bItemPanelAddItemHasOperation = false;
+            BUTTON_REFRESH.removeActionListener(this);
+            refreshFrame();
+            return;
+        }
+        if(e.getSource() == BUTTON_MINIMIZE){
+            m_bpanelUserAddHasOperation = false;
+            m_bpanelUserEditHasOperation = false;
+            m_bpanelItemManagerHasOperation = false;
+            BUTTON_MINIMIZE.removeActionListener(this);
+            refreshFrame();
             return;
         }
         if(e.getSource() == BUTTON_LOGOUT){

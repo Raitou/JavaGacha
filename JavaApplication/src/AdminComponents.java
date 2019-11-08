@@ -71,17 +71,22 @@ public interface AdminComponents {
     public final static JButton BUTTON_ADD_ITEM = new JButton("Add Item");
     public final static JButton BUTTON_EDIT_ITEM = new JButton("Edit Item");
     public final static JButton BUTTON_SEARCH_ITEM = new JButton("Search Item");
-    public final static JButton BUTTON_DELETE_ITEM = new JButton("Delete Item");
-    public final static JButton BUTTON_SHOW_ALL_ITEM = new JButton("Show All Items");
+    public final static JButton BUTTON_REFRESH = new JButton("Refresh Item List");
     public final static JButton BUTTON_MINIMIZE = new JButton("Minimize");
     
+    //Sub Components ItemManager.ItemEdit
+    public final static JLabel EDIT_ITEM_LABEL_EDIT_ITEM = new JLabel("Edit Item");
+    public final static JLabel EDIT_ITEM_LABEL_EDIT_ITEM_RARITY = new JLabel("Item Rarity: ", JLabel.CENTER);
+    public final static JLabel EDIT_ITEM_LABEL_EDIT_ITEM_NAME = new JLabel("Item Name: ", JLabel.CENTER);
+    public final static JTextField EDIT_ITEM_TEXTFIELD_ITEM_NAME = new JTextField();
+    public final static JComboBox EDIT_ITEM_COMBOBOX_ITEM_RARITY = new JComboBox(new String[]{"NORMAL" , "RARE", "SUPER RARE",});
+    public final static JButton EDIT_ITEM_BUTTON_APPLY_CHANGES = new JButton("Apply Changes / Minimize");
     
-    public final static JLabel LABEL_EDIT_ITEM = new JLabel("Edit Item");
-    public final static JLabel LABEL_EDIT_ITEM_RARITY = new JLabel("Item Rarity: ", JLabel.CENTER);
-    public final static JLabel LABEL_EDIT_ITEM_NAME = new JLabel("Item Name: ", JLabel.CENTER);
+    public final static JLabel LABEL_ADD_ITEM = new JLabel("Add Item");
+    public final static JLabel LABEL_ADD_ITEM_NAME = new JLabel("Item Name: ", JLabel.CENTER);
+    public final static JLabel LABEL_ADD_ITEM_RARITY = new JLabel("Item Rarity: ", JLabel.CENTER);
     public final static JTextField TEXTFIELD_ITEM_NAME = new JTextField();
-    public final static JComboBox COMBOBOX_ITEM_RARITY = new JComboBox(new String[]{"NORMAL" , "RARE", "SUPER RARE",});
-    public final static JButton BUTTON_APPLY_CHANGES = new JButton("Apply Changes / Minimize");
-    
+    public final static JComboBox COMBOXBOX_ITEM_RARITY = new JComboBox(new String[]{"NORMAL" , "RARE", "SUPER RARE",});
+    public final static JButton ADD_ITEM_BUTTON_ADD_ITEM = new JButton("Add Item / Minimize");
     
 }
