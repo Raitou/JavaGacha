@@ -1,7 +1,3 @@
-/*
- * ADD INPUT VALIDATION
- */
-
 /**
  *
  * @author raito
@@ -10,7 +6,6 @@
 
 
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -21,7 +16,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,7 +38,6 @@ public class UserWindow extends JFrame
     private static boolean m_bpanelChangeProfileHasOperation = false;
     private static boolean m_bpanelPlayGachaHasOperation = false;
     private static boolean m_bpanelInventoryHasOperation = false;
-    private static boolean m_bpanelSettingsHasOperation = false;
     
     /*
     Window State
@@ -54,8 +47,6 @@ public class UserWindow extends JFrame
     private static boolean IS_CHECKED = false;          // boolean attribute for the password Visible CheckButton
     private static User m_user;                         // attribute that contains all user info
     private static ArrayList<GachaItem> m_itemOwned;    // attribute that contains all the owned item of the user
-    private static Font currentFont;
-    private static ArrayList<Font> availableFonts;
     
     public UserWindow(User user){
         UserWindow.m_user = user;
@@ -84,35 +75,25 @@ public class UserWindow extends JFrame
         gbc.insets = new Insets(10 , 10, 10, 10);
         
         if((panelPlayGacha = initializePlayGacha()) != null){
-            gbc.gridwidth = 2;
-            gbc.gridheight = 2;
             gbc.gridx = 0;
             gbc.gridy = 0;
             super.add(panelPlayGacha, gbc);
         }   
                     
         if((panelInventory = initializeInventory()) != null){
-            gbc.gridwidth = 1;
-            gbc.gridheight = 1;
-            gbc.gridx = 0;
-            gbc.gridy = 2;
+            gbc.gridx = 1;
+            gbc.gridy = 0;
             super.add(panelInventory,gbc);
         }
         if((panelChangeProfile = initializeChangeProfile()) != null){
-            gbc.gridx = 1;
-            gbc.gridy = 2;
-            super.add(panelChangeProfile = initializeChangeProfile(), gbc);
-        }
-        
-        if((panelSettings = initializeSettings()) != null){
             gbc.gridx = 0;
-            gbc.gridy = 3;
-            super.add(panelSettings, gbc);
+            gbc.gridy = 1;
+            super.add(panelChangeProfile = initializeChangeProfile(), gbc);
         }
         
         if((panelLogout = initializeLogout()) != null){
             gbc.gridx = 1;
-            gbc.gridy = 3;
+            gbc.gridy = 1;
             super.add(panelLogout, gbc);
         }
         
@@ -189,7 +170,6 @@ public class UserWindow extends JFrame
     */
     private void refreshFrame(){
         removeComponents();
-        setFrameFont(currentFont);
         initializeComponents();
         super.pack();
     }
@@ -425,26 +405,6 @@ public class UserWindow extends JFrame
             }
         }
         return userLayout;
-    }
-    
-    public Component initializeSettings(){
-        GridBagConstraints gbc = new GridBagConstraints();
-        JPanel userLayout = new JPanel(new GridBagLayout());
-        
-        if(m_bpanelSettingsHasOperation &&
-                !(m_bpanelPlayGachaHasOperation) &&
-                !(m_bpanelChangeProfileHasOperation) &&
-                !(m_bpanelInventoryHasOperation)){
-            
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        userLayout.add(SETTINGS_CB_FONT);
-        
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        userLayout.add(SETTINGS_BUTTON_APPLY);
-        }
-        return BUTTON_SETTINGS;
     }
     
     /*
@@ -803,54 +763,5 @@ public class UserWindow extends JFrame
         
         return string;
     }
-    
-    public void setFrameFont(Font font){
-
-        BUTTON_PLAY_GACHA.setFont(font);
-        BUTTON_INVENTORY.setFont(font);
-        BUTTON_CHANGE_PROFILE.setFont(font);
-        BUTTON_SETTINGS.setFont(font);
-        BUTTON_LOGOUT.setFont(font);
-        
-        CHANGE_PROFILE_BUTTON_APPLY.setFont(font);
-        CHANGE_PROFILE_TEXTFIELD_USER.setFont(font);
-        CHANGE_PROFILE_TEXTFIELD_NICKNAME.setFont(font);
-        CHANGE_PROFILE_TEXTFIELD_PASS.setFont(font);
-        CHANGE_PROFILE_PASSFIELD_USER.setFont(font);
-        CHANGE_PROFILE_PASSFIELD_USER_CONFIRM.setFont(font);
-        CHANGE_PROFILE_LABEL_CREATE_USER.setFont(font);
-        CHANGE_PROFILE_LABEL_USER.setFont(font);
-        CHANGE_PROFILE_LABEL_NICKNAME.setFont(font);
-        CHANGE_PROFILE_LABEL_PASS.setFont(font);
-        CHANGE_PROFILE_IS_VISIBLE.setFont(font);
-    
-    /*
-        Play Gacha Components
-    */
-    
-        PLAY_GACHA_LABEL_TITLE.setFont(font);
-        PLAY_GACHA_LABEL_GAMEPOINTS.setFont(font);
-        PLAY_GACHA_BUTTON_ROLL.setFont(font);
-        PLAY_GACHA_BUTTON_BACK.setFont(font);
-        PLAY_GACHA_TEXTFIELD_ITEM.setFont(font);
-    
-    /*
-        Show Items Components
-    */
-        INVENTORY_LABEL_INVENTORY.setFont(font);
-        INVENTORY_BUTTON_SELL.setFont(font);
-        INVENTORY_BUTTON_BACK.setFont(font);
-        INVENTORY_LIST_ITEMS.setFont(font);
-        INVENTORY_LIST_SCROLL.setFont(font);
-    
-    /*
-        Settings Components
-    */
-        SETTINGS_LABEL_SETTINGS.setFont(font);
-        SETTINGS_CB_COLOR.setFont(font);
-        SETTINGS_CB_FONT.setFont(font);
-        SETTINGS_BUTTON_BACK.setFont(font);
-    }
-
 }
 

@@ -1,14 +1,11 @@
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.Timer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -61,15 +58,5 @@ public interface UserComponents {
     public final static JButton INVENTORY_BUTTON_BACK = new JButton("BACK");
     public static final JList<String> INVENTORY_LIST_ITEMS = new JList<>();
     public static final JScrollPane INVENTORY_LIST_SCROLL = new JScrollPane(INVENTORY_LIST_ITEMS);
-    
-    /*
-        Settings Components
-    */
-    public final static JLabel SETTINGS_LABEL_SETTINGS = new JLabel("Settings", JLabel.CENTER);
-    public final static JComboBox SETTINGS_CB_COLOR = new JComboBox();
-    public final static JComboBox SETTINGS_CB_FONT = new JComboBox();
-    public final static JButton SETTINGS_BUTTON_BACK = new JButton("Back");
-    public final static JButton SETTINGS_BUTTON_APPLY = new JButton("Apply");
-    
     
 }
