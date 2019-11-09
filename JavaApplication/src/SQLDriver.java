@@ -18,9 +18,9 @@ public class SQLDriver {
     This class determines which SQL server to connect to 
     Also determines the User and password in order to use the database
     */
-    protected final static String CONNECTION_URL = "jdbc:mysql://localhost/testdb?useSSL=false";
-    protected final static String USER = "aevan";
-    protected final static String PASS = "evanamel";
+    protected final static String CONNECTION_URL = "jdbc:mysql://host/databse?useSSL=false";
+    protected final static String USER = "";
+    protected final static String PASS = "";
     
     protected SQLDriver(){
         try(Connection con = DriverManager.getConnection(CONNECTION_URL, USER, PASS);){
